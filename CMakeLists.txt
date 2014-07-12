@@ -6,7 +6,7 @@ if (NOT CMAKE_BUILD_TYPE)
 endif()
 message("-- Build type: ${CMAKE_BUILD_TYPE}")
 
-option(zqrpc_build_plugin "Build zqrpc's plugin." ON)
+option(zqrpc_build_plugin "Build zqrpc's plugin." OFF)
 option(zqrpc_build_tests "Build zqrpc's tests." OFF)
 option(zqrpc_build_static "Build static library." OFF)
 option(zqrpc_build_examples "Build zqrpc's examples." ON)
