@@ -35,7 +35,6 @@
 #include <google/protobuf/stubs/common.h>
 #include "zqrpc/RpcHeaders.hh"
 #include "zqrpc/RpcWorker.hh"
-#include "zqrpc.pb.h"
 
 
 zqrpc::RpcWorker::RpcWorker(zmq::context_t* context, RpcMethodMapT rpc_method_map)

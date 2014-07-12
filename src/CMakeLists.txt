@@ -6,20 +6,11 @@ set (ZQRPC_VERSION_MINOR 1)
 
 # add_subdirectory(plugin)
 
-include(zqrpc_functions)
-find_package(ProtobufPlugin REQUIRED)
-PROTOBUF_GENERATE_CPP(ZQRPC_PB_SRCS ZQRPC_PB_HDRS zqrpc.proto)
-set(PROTO_SOURCES ${ZQRPC_PB_SRCS} ${ZQRPC_PB_HDRS})
-
-add_library(zqrpc_pb ${ZQRPC_PB_SRCS} ${ZQRPC_PB_HDRS})
-target_link_libraries(zqrpc_pb ${PROTOBUF_LIBRARY})
-
 include_directories(${PROJECT_BINARY_DIR})
 set(ZQRPC_SOURCES
     RpcChannel.cc
     RpcServer.cc
-    RpcWorker.cc
-    ${PROTO_SOURCES})
+    RpcWorker.cc)
 
 set(ZQRPC_LIB_DEPS 
     ${GLOG_LIBRARIES}

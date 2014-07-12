@@ -7,17 +7,17 @@
  * @section LICENSE
  *
  * Copyright (c) 2014 S Roychowdhury
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software, and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
  * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
@@ -106,6 +106,24 @@ public:
 		} while(more);
 
 		return frames;
+	}
+
+	template<typename T>
+	bool TimedRecv(T& frames, long timeout) {
+		zmq::pollitem_t items[] = { { socket_, 0, ZMQ_POLLIN, 0 } };
+		zmq::poll (&items[0], 1, timeout);
+		// If we got a reply, process it
+		if (items[0].revents & ZMQ_POLLIN) {
+			zmq::message_t msg(0);
+			bool more=false;
+			do {
+				if (!socket_.recv(&msg, 0)) throw zmq::error_t();
+				frames.push_back(std::string(static_cast<char*>(msg.data()), msg.size()));
+				more = msg.more();
+			} while(more);
+			return true;
+		}
+		return false;
 	}
 
 private:

@@ -34,10 +34,34 @@
 #define _ZQRPC_ZERROR_HPP_
 #include <string>
 #include <exception>
-#include "zqrpc.pb.h"
 
 
 namespace zqrpc {
+
+namespace {
+enum ResponseCodeE {
+    ZRC_INACTIVE = 1,
+    ZRC_ACTIVE = 2,
+    ZRC_SUCCESS = 3,
+    ZRC_CANCELLED = 4,
+    ZRC_WORKING = 5,
+    ZRC_ERROR = 6,
+    ZRC_TIMEDOUT = 7,
+    ZRC_TERMINATED = 8
+};
+enum ErrorCodeE {
+    ZEC_SUCCESS = 1,
+    ZEC_INVALIDHEADER = 2,
+    ZEC_NOSUCHSERVICE = 3,
+    ZEC_NOSUCHMETHOD = 4,
+    ZEC_METHODNOTIMPLEMENTED = 5,
+    ZEC_CONNECTIONERROR = 6,
+    ZEC_UNKNOWN = 7
+};
+} // namespace blank
+
+
+
 class ZError : public std::exception {
 public:
 

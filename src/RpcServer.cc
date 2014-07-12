@@ -37,7 +37,6 @@
 #include "zqrpc/RpcHeaders.hh"
 #include "zqrpc/RpcServer.hh"
 #include "zqrpc/RpcWorker.hh"
-#include "zqrpc.pb.h"
 
 zqrpc::RpcServer::RpcServer(zmq::context_t* context) :
 	context_(context),
