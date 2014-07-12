@@ -40,23 +40,23 @@ namespace zqrpc {
 
 namespace {
 enum ResponseCodeE {
-    ZRC_INACTIVE = 1,
-    ZRC_ACTIVE = 2,
-    ZRC_SUCCESS = 3,
-    ZRC_CANCELLED = 4,
-    ZRC_WORKING = 5,
-    ZRC_ERROR = 6,
-    ZRC_TIMEDOUT = 7,
-    ZRC_TERMINATED = 8
+    ZRC_INACTIVE                = 1,
+    ZRC_ACTIVE                  = 2,
+    ZRC_SUCCESS                 = 3,
+    ZRC_CANCELLED               = 4,
+    ZRC_WORKING                 = 5,
+    ZRC_ERROR                   = 6,
+    ZRC_TIMEDOUT                = 7,
+    ZRC_TERMINATED              = 8
 };
 enum ErrorCodeE {
-    ZEC_SUCCESS = 1,
-    ZEC_INVALIDHEADER = 2,
-    ZEC_NOSUCHSERVICE = 3,
-    ZEC_NOSUCHMETHOD = 4,
-    ZEC_METHODNOTIMPLEMENTED = 5,
-    ZEC_CONNECTIONERROR = 6,
-    ZEC_UNKNOWN = 7
+    ZEC_SUCCESS                 = 0,
+    ZEC_INVALIDHEADER           = 1,
+    ZEC_NOSUCHSERVICE           = 2,
+    ZEC_NOSUCHMETHOD            = 3,
+    ZEC_METHODNOTIMPLEMENTED    = 4,
+    ZEC_CONNECTIONERROR         = 5,
+    ZEC_UNKNOWNERROR            = 6
 };
 } // namespace blank
 
@@ -71,8 +71,12 @@ public:
 		return emesg_;
 	}
 
-	virtual int code() const throw () {
+	virtual ErrorCodeE code() const throw () {
 		return ecode_;
+	}
+
+	virtual int icode() const throw () {
+		return (int)ecode_;
 	}
 
 private:

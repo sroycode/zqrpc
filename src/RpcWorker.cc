@@ -31,6 +31,7 @@
  *
  */
 #include <deque>
+#include <boost/lexical_cast.hpp>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/stubs/common.h>
 #include "zqrpc/RpcHeaders.hh"
@@ -74,12 +75,18 @@ void zqrpc::RpcWorker::operator() ()
 			// send response message back
 			DLOG(INFO) << boost::this_thread::get_id() << " :outbuf: " << buffer << std::endl;
 			frames.clear();
+			// BLANK ERRORCODE DATA
 			frames.push_back("");
-			frames.push_back(opcode);
+			frames.push_back("0"); // Error Code 0 = ZEC_SUCCESS
 			frames.push_back(buffer);
 			socket.Send(frames);
 		}
 	} catch(const zqrpc::ZError& e) {
+			// BLANK ERRORCODE DATA
+			frames.push_back("");
+			frames.push_back(boost::lexical_cast<std::string>(e.icode()));
+			frames.push_back(std::string(e.what()));
+			socket.Send(frames);
 	} catch(const zmq::error_t& e) {
 		DLOG(INFO) << boost::this_thread::get_id() << " :error: " << e.what() << std::endl;
 	}
