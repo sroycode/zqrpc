@@ -1,0 +1,37 @@
+package zqrpc;
+
+enum ResponseCodeE {
+	ZRC_INACTIVE                          = 1;
+	ZRC_ACTIVE                            = 2;
+	ZRC_SUCCESS                           = 3;
+	ZRC_CANCELLED                         = 4;
+	ZRC_WORKING                           = 5;
+	ZRC_ERROR                             = 6;
+	ZRC_TIMEDOUT                          = 7;
+	ZRC_TERMINATED                        = 8;
+};
+
+enum ErrorCodeE {
+	ZEC_SUCCESS                           = 1;
+	ZEC_INVALIDHEADER                     = 2;
+	ZEC_NOSUCHSERVICE                     = 3;
+	ZEC_NOSUCHMETHOD                      = 4;
+	ZEC_METHODNOTIMPLEMENTED              = 5;
+	ZEC_CONNECTIONERROR                   = 6;
+	ZEC_UNKNOWN                           = 7;
+};
+
+message HeaderT {
+	optional uint64 eventid               = 1;
+	optional uint64 deadline              = 2;
+	optional string service               = 3;
+	optional string method                = 4;
+}
+
+message StatusT {
+	optional HeaderT header               = 1;
+	optional ResponseCodeE response       = 2;
+	optional ErrorCodeE error             = 3;
+	optional string errormsg              = 4;
+	
+}
