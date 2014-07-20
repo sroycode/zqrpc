@@ -11,6 +11,8 @@ Compile
 
 To Compile
 <pre>
+mkdir build
+cd build
 cmake .. 
 make
 </pre>
