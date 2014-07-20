@@ -47,7 +47,7 @@ zqrpc::RpcWorker::~RpcWorker() {}
 
 void zqrpc::RpcWorker::operator() ()
 {
-	zqrpc::ZSocket socket(context_,ZMQ_REP,"");
+	zqrpc::ZSocket socket(context_,ZMQ_REP,boost::lexical_cast<std::string>(boost::this_thread::get_id()));
 	socket.connect(ZQRPC_INPROC_WORKER);
 	socket.SetLinger(0);
 	google::protobuf::Message* request = NULL;
@@ -61,13 +61,12 @@ void zqrpc::RpcWorker::operator() ()
 			frames.clear();
 			frames = socket.BlockingRecv<FramesT>();
 			try {
-		for (std::size_t i=0;i<frames.size();++i) {
-			DLOG(INFO) << i << "/" << frames.size() << " : " << frames[i] << std::endl;
-		}
+				for (std::size_t i=0; i<frames.size(); ++i) {
+					DLOG(INFO) << i << "/" << frames.size() << " : " << frames[i] << std::endl;
+				}
 				nextid = frames.at(1);
 				if (frames.size() !=4)
 					throw zqrpc::ZError(ZEC_INVALIDHEADER);
-		DLOG(INFO) << "RECV MSG 2" << std::endl;
 				nextid = frames.at(1);
 				std::string opcode = frames.at(2);
 				std::string buffer = frames.at(3);

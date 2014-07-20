@@ -75,7 +75,6 @@ void zqrpc::RpcChannel::ZSendMethod(const google::protobuf::MethodDescriptor* me
 		if (!status) throw zmq::error_t();
 
 		// OK
-		DLOG(INFO) << "SENT MSG" << std::endl;
 		controller->rcode_ = ZRC_WORKING;
 		controller->reqno_ = replylist_.size();
 		replylist_[nextreply_]=controller;
