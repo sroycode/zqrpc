@@ -1,5 +1,4 @@
 // Specs for Echo
-option cc_generic_services = true;
 package echo;
 
 message EchoRequest

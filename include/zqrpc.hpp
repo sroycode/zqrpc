@@ -34,7 +34,7 @@
 #define _ZQRPC_HPP_
 #include "zmq.hpp"
 #include "zqrpc/ZmqUtils.hpp"
-#include "zqrpc/ZSocket.hpp"
+#include "zqrpc/ServiceBase.hpp"
 #include "zqrpc/RpcHeaders.hh"
 #include "zqrpc/RpcChannel.hh"
 #include "zqrpc/RpcMethod.hpp"

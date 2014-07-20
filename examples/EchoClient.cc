@@ -34,6 +34,7 @@
 #include <iostream>
 #include "zqrpc.hpp"
 #include "echo.pb.h"
+#include "echo.zqrpc.h"
 
 #include "EchoEndpoint.hh"
 
@@ -44,17 +45,15 @@ int main(int argc, char *argv[])
 
 	try {
 		context = new zmq::context_t(1);
+		zqrpc::ZController controller;
 		echo::EchoRequest request;
+		echo::EchoResponse response;
 		zqrpc::RpcChannel rpc_channel(context,ECHO_ENDPOINT_PORT);
 		echo::EchoService::Stub stub(&rpc_channel);
-		echo::EchoResponse response;
-		request.set_message("123456789012345678901234567890123456");
-		stub.Echo1(NULL, &request, &response, NULL);
-		std::cerr << "REQUEST: " << request.DebugString() << std::endl;
-		std::cerr << "REPLY: " << response.DebugString() << std::endl;
 
-		request.set_message("654321098765432109876543210987654321");
-		stub.Echo2(NULL, &request, &response, NULL);
+		request.set_message("123456789012345678901234567890123456");
+		stub.Echo1(&controller, &request, &response,-1);
+		
 		std::cerr << "REQUEST: " << request.DebugString() << std::endl;
 		std::cerr << "REPLY: " << response.DebugString() << std::endl;
 

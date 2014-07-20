@@ -7,17 +7,17 @@
  * @section LICENSE
  *
  * Copyright (c) 2014 S Roychowdhury
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software, and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
  * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
@@ -36,24 +36,31 @@
 #include <google/protobuf/message.h>
 #include <string>
 
+#include <map>
+#include <vector>
 #include "ZmqUtils.hpp"
+#include "ZController.hpp"
 
 namespace zqrpc {
-class RpcChannel : public google::protobuf::RpcChannel {
+class RpcChannel {
 public:
+	typedef std::map<std::size_t,ZController*> ReplyListT;
 	RpcChannel(zmq::context_t* context, const char* url);
 	virtual ~RpcChannel();
-	virtual void CallMethod(const google::protobuf::MethodDescriptor* method,
-	                        google::protobuf::RpcController* controller,
-	                        const google::protobuf::Message* request,
-	                        google::protobuf::Message* response,
-	                        google::protobuf::Closure* done);
+	virtual void ZSendMethod(const google::protobuf::MethodDescriptor* method,
+	                         ZController* controller,
+	                         const google::protobuf::Message* request);
+	virtual void ZRecvMethod(ZController* controller,
+	                         google::protobuf::Message* response,
+	                         long timeout);
 
 	void Close();
 protected:
 	zmq::context_t* context_;
 	ZSocket socket_;
 	const char* url_;
+	ReplyListT replylist_;
+	std::size_t nextreply_;
 };
 }
 #endif

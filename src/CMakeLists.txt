@@ -10,7 +10,8 @@ include_directories(${PROJECT_BINARY_DIR})
 set(ZQRPC_SOURCES
     RpcChannel.cc
     RpcServer.cc
-    RpcWorker.cc)
+    RpcWorker.cc
+    ServiceBase.cc)
 
 set(ZQRPC_LIB_DEPS 
     ${GLOG_LIBRARIES}

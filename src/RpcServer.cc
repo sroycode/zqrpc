@@ -56,7 +56,7 @@ void zqrpc::RpcServer::EndPoint(const char* url)
 	rpc_bind_vec_.push_back(std::string(url));
 }
 
-void zqrpc::RpcServer::RegisterService(google::protobuf::Service* service)
+void zqrpc::RpcServer::RegisterService(zqrpc::ServiceBase* service)
 {
 	const google::protobuf::ServiceDescriptor *descriptor = service->GetDescriptor();
 	for (int i = 0; i < descriptor->method_count(); ++i) {
@@ -72,7 +72,7 @@ void zqrpc::RpcServer::RegisterService(google::protobuf::Service* service)
 	}
 }
 
-void zqrpc::RpcServer::RemoveService(google::protobuf::Service* service)
+void zqrpc::RpcServer::RemoveService(zqrpc::ServiceBase* service)
 {
 	const google::protobuf::ServiceDescriptor *descriptor = service->GetDescriptor();
 	for (int i = 0; i < descriptor->method_count(); ++i) {

@@ -37,29 +37,20 @@
 #include <iostream>
 #include "zqrpc.hpp"
 #include "echo.pb.h"
+#include "echo.zqrpc.h"
 #include "EchoEndpoint.hh"
 
 class EchoServiceImpl : public echo::EchoService {
 public:
 	EchoServiceImpl() {};
 
-	virtual void Echo1(::google::protobuf::RpcController* controller,
-	                   const ::echo::EchoRequest* request,
-	                   ::echo::EchoResponse* response,
-	                   ::google::protobuf::Closure* done) {
+	virtual void Echo1(const ::echo::EchoRequest* request,
+	                   ::echo::EchoResponse* response) {
 		response->set_response(std::string("You sent1: ") + request->message());
-		if (done) {
-			done->Run();
-		}
 	}
-	virtual void Echo2(::google::protobuf::RpcController* controller,
-	                   const ::echo::EchoRequest* request,
-	                   ::echo::EchoResponse* response,
-	                   ::google::protobuf::Closure* done) {
+	virtual void Echo2(const ::echo::EchoRequest* request,
+	                   ::echo::EchoResponse* response) {
 		response->set_response(std::string("You sent2: ") + request->message());
-		if (done) {
-			done->Run();
-		}
 	}
 };
 
@@ -76,7 +67,7 @@ int main(int argc, char *argv[])
 		context = new zmq::context_t(1);
 		zqrpc::RpcServer rpc_server(context);
 		rpc_server.EndPoint(ECHO_ENDPOINT_PORT);
-		::google::protobuf::Service *service = new EchoServiceImpl();
+		zqrpc::ServiceBase *service = new EchoServiceImpl();
 		rpc_server.RegisterService(service);
 		rpc_server.Start(2);
 	} catch (zmq::error_t& e) {

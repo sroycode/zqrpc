@@ -45,7 +45,8 @@ class ZSocket {
 
 public:
 	ZSocket(zmq::context_t* context, int type, const std::string& id)
-		: socket_(*context,type) {
+		: socket_(*context,type)
+	{
 		if (id.length()>0)
 			socket_.setsockopt(ZMQ_IDENTITY, id.c_str(), id.length());
 	}
@@ -88,6 +89,7 @@ public:
 		for (typename T::const_iterator it = frames.begin(); it!=frames.end(); ++it,--fleft) {
 			if ( it->length()==0 ) msg.rebuild();
 			else msg.rebuild((void*)it->c_str(),it->length(),NULL);
+			DLOG(INFO) << std::string(static_cast<char*>(msg.data()), msg.size()) << std::endl;
 			if (! socket_.send(msg, (fleft==1) ? 0 : ZMQ_SNDMORE) )
 				throw ZError(ZEC_CONNECTIONERROR,"cannot send data frame");
 		}
@@ -100,8 +102,9 @@ public:
 		zmq::message_t msg(0);
 		bool more=false;
 		do {
-			if (!socket_.recv(&msg, 0)) throw zmq::error_t();
+			if (!socket_.recv(&msg, 0)) throw zqrpc::RetryException();
 			frames.push_back(std::string(static_cast<char*>(msg.data()), msg.size()));
+			DLOG(INFO) << std::string(static_cast<char*>(msg.data()), msg.size()) << std::endl;
 			more = msg.more();
 		} while(more);
 
@@ -109,21 +112,24 @@ public:
 	}
 
 	template<typename T>
-	bool TimedRecv(T& frames, long timeout) {
+	T NonBlockingRecv() {
+		T frames;
+		zmq::message_t msg(0);
+		bool more=false;
+		do {
+			if (!socket_.recv(&msg, ZMQ_NOBLOCK)) throw zqrpc::RetryException();
+			frames.push_back(std::string(static_cast<char*>(msg.data()), msg.size()));
+			more = msg.more();
+		} while(more);
+
+		return frames;
+	}
+
+	bool Poll(long timeout) {
 		zmq::pollitem_t items[] = { { socket_, 0, ZMQ_POLLIN, 0 } };
 		zmq::poll (&items[0], 1, timeout);
-		// If we got a reply, process it
-		if (items[0].revents & ZMQ_POLLIN) {
-			zmq::message_t msg(0);
-			bool more=false;
-			do {
-				if (!socket_.recv(&msg, 0)) throw zmq::error_t();
-				frames.push_back(std::string(static_cast<char*>(msg.data()), msg.size()));
-				more = msg.more();
-			} while(more);
-			return true;
-		}
-		return false;
+		return (items[0].revents & ZMQ_POLLIN);
+		DLOG(INFO) << "Polling End" << std::endl;
 	}
 
 private:

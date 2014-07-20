@@ -39,16 +39,6 @@
 namespace zqrpc {
 
 namespace {
-enum ResponseCodeE {
-    ZRC_INACTIVE                = 1,
-    ZRC_ACTIVE                  = 2,
-    ZRC_SUCCESS                 = 3,
-    ZRC_CANCELLED               = 4,
-    ZRC_WORKING                 = 5,
-    ZRC_ERROR                   = 6,
-    ZRC_TIMEDOUT                = 7,
-    ZRC_TERMINATED              = 8
-};
 enum ErrorCodeE {
     ZEC_SUCCESS                 = 0,
     ZEC_INVALIDHEADER           = 1,
@@ -56,16 +46,24 @@ enum ErrorCodeE {
     ZEC_NOSUCHMETHOD            = 3,
     ZEC_METHODNOTIMPLEMENTED    = 4,
     ZEC_CONNECTIONERROR         = 5,
-    ZEC_UNKNOWNERROR            = 6
+    ZEC_DATACORRUPTED           = 6,
+    ZEC_CLIENTERROR             = 7,
+    ZEC_UNKNOWNERROR            = 8
 };
 } // namespace blank
 
-
+struct RetryException {};
+struct TimeoutException {};
 
 class ZError : public std::exception {
 public:
 
 	ZError(ErrorCodeE ecode, const char* emesg="") : ecode_(ecode), emesg_(emesg) {}
+
+	virtual void reset(ErrorCodeE ecode, const char* emesg="") {
+		ecode_=ecode;
+		emesg_=emesg;
+	}
 
 	virtual const char* what() const throw () {
 		return emesg_;
@@ -80,7 +78,7 @@ public:
 	}
 
 private:
-	const ErrorCodeE ecode_;
+	ErrorCodeE ecode_;
 	const char* emesg_;
 };
 }
