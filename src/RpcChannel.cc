@@ -104,7 +104,7 @@ void zqrpc::RpcChannel::ZRecvMethod(ZController* controller,
 	// The Loop below keeps polling and taking in data
 	const long start = zqrpc::mstime();
 	bool toget=false;
-	typedef std::deque<std::string> FramesT;
+	typedef std::vector<std::string> FramesT;
 	FramesT frames;
 	do {
 		// check if we need to poll
@@ -119,7 +119,7 @@ void zqrpc::RpcChannel::ZRecvMethod(ZController* controller,
 		if (!toget) break;
 
 		// we have action
-		typedef std::deque<std::string> FramesT;
+		typedef std::vector<std::string> FramesT;
 		try {
 			frames = socket_.NonBlockingRecv<FramesT>();
 		} catch (zqrpc::RetryException& e) {
@@ -128,7 +128,7 @@ void zqrpc::RpcChannel::ZRecvMethod(ZController* controller,
 			continue;
 		}
 		// discard bad data , but toget remains true hence loop
-		if (frames.size() !=3) continue;
+		if (frames.size() !=4) continue;
 		// BLANK ID ERRORCODE DATA
 		// data looks ok
 		std::size_t nextid = boost::lexical_cast<std::size_t>(frames[1]);
@@ -140,7 +140,7 @@ void zqrpc::RpcChannel::ZRecvMethod(ZController* controller,
 		zqrpc::ZController* othercon = it->second;
 		int error = atoi(frames.at(2).c_str());
 		if (error) {
-			othercon->zerror_ = zqrpc::ZError(static_cast<zqrpc::ErrorCodeE>(error),frames.at(3).c_str());
+			othercon->zerror_ = zqrpc::ZError(static_cast<zqrpc::ErrorCodeE>(error),frames.at(4).c_str());
 			othercon->rcode_ = ZRC_ERROR;
 		} else {
 			othercon->payload_ = frames.at(3);

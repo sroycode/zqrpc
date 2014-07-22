@@ -31,6 +31,7 @@
  *
  */
 #include <deque>
+#include <vector>
 #include <boost/lexical_cast.hpp>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/stubs/common.h>
@@ -52,7 +53,7 @@ void zqrpc::RpcWorker::operator() ()
 	socket.SetLinger(0);
 	google::protobuf::Message* request = NULL;
 	google::protobuf::Message* response = NULL;
-	typedef std::deque<std::string> FramesT;
+	typedef std::vector<std::string> FramesT;
 	FramesT frames;
 	std::string nextid;
 	while (1) {
@@ -64,12 +65,13 @@ void zqrpc::RpcWorker::operator() ()
 				for (std::size_t i=0; i<frames.size(); ++i) {
 					DLOG(INFO) << i << "/" << frames.size() << " : " << frames[i] << std::endl;
 				}
-				nextid = frames.at(1);
-				if (frames.size() !=4)
-					throw zqrpc::ZError(ZEC_INVALIDHEADER);
-				nextid = frames.at(1);
-				std::string opcode = frames.at(2);
-				std::string buffer = frames.at(3);
+				if (frames.size() !=5)
+					continue;
+				nextid = frames.at(2);
+				std::string opcode = frames.at(3);
+				std::string buffer = frames.at(4);
+				frames.pop_back();
+				frames.pop_back();
 				DLOG(INFO) << "nextid->" << nextid << std::endl;
 				DLOG(INFO) << "opcode->" << opcode << std::endl;
 				DLOG(INFO) << "buffer->" << buffer << std::endl;
@@ -89,17 +91,11 @@ void zqrpc::RpcWorker::operator() ()
 				// send response message back
 				DLOG(INFO) << boost::this_thread::get_id() << " :outbuf: " << buffer << std::endl;
 				// BLANK ID ERRORCODE DATA
-				frames.clear();
-				frames.push_back("");
-				frames.push_back(nextid);
 				frames.push_back("0"); // Error Code 0 = ZEC_SUCCESS
 				frames.push_back(buffer);
 				socket.Send<FramesT>(frames);
 			} catch(const zqrpc::ZError& e) {
 				// BLANK ID ERRORCODE DATA
-				frames.clear();
-				frames.push_back("");
-				frames.push_back(nextid);
 				frames.push_back(boost::lexical_cast<std::string>(e.icode()));
 				frames.push_back(std::string(e.what()));
 				socket.Send<FramesT>(frames);

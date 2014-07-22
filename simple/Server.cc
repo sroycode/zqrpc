@@ -2,7 +2,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>
-#include "Common.hpp"
+#include "zqrpc/ZSocket.hpp"
 
 
 namespace zqrpc {
