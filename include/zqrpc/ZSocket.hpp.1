@@ -85,8 +85,10 @@ public:
 	bool Send(const T& frames) {
 		std::size_t fleft= frames.size();
 		if(!fleft) return true;
+		zmq::message_t msg(0);
 		for (typename T::const_iterator it = frames.begin(); it!=frames.end(); ++it,--fleft) {
-			zmq::message_t msg((void*)it->c_str(),it->length(),NULL);
+			if ( it->length()==0 ) msg.rebuild();
+			else msg.rebuild((void*)it->c_str(),it->length(),NULL);
 			DLOG(INFO) << std::string(static_cast<char*>(msg.data()), msg.size()) << std::endl;
 			if (! socket_.send(msg, (fleft==1) ? 0 : ZMQ_SNDMORE) )
 				throw ZError(ZEC_CONNECTIONERROR,"cannot send data frame");
@@ -97,9 +99,9 @@ public:
 	template<typename T>
 	T BlockingRecv() {
 		T frames;
+		zmq::message_t msg(0);
 		bool more=false;
 		do {
-			zmq::message_t msg(0);
 			if (!socket_.recv(&msg, 0)) throw zqrpc::RetryException();
 			frames.push_back(std::string(static_cast<char*>(msg.data()), msg.size()));
 			DLOG(INFO) << std::string(static_cast<char*>(msg.data()), msg.size()) << std::endl;

@@ -30,6 +30,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -Werror")
 set(CMAKE_OSX_ARCHITECTURES x86_64)
 
 add_subdirectory(src)
+add_subdirectory(simple)
 
 if(zqrpc_build_plugin)
   add_subdirectory(plugin)

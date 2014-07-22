@@ -47,7 +47,7 @@ zqrpc::RpcWorker::~RpcWorker() {}
 
 void zqrpc::RpcWorker::operator() ()
 {
-	zqrpc::ZSocket socket(context_,ZMQ_REP,boost::lexical_cast<std::string>(boost::this_thread::get_id()));
+	zqrpc::ZSocket socket(context_,ZMQ_DEALER,boost::lexical_cast<std::string>(boost::this_thread::get_id()));
 	socket.connect(ZQRPC_INPROC_WORKER);
 	socket.SetLinger(0);
 	google::protobuf::Message* request = NULL;

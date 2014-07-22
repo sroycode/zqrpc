@@ -43,7 +43,7 @@
 
 zqrpc::RpcChannel::RpcChannel(zmq::context_t* context, const char* url) :
 	context_(context),
-	socket_(context,ZMQ_REQ,boost::lexical_cast<std::string>(boost::this_thread::get_id())),
+	socket_(context,ZMQ_DEALER,boost::lexical_cast<std::string>(boost::this_thread::get_id())),
 	url_(url),
 	nextreply_(0)
 {
@@ -65,6 +65,7 @@ void zqrpc::RpcChannel::ZSendMethod(const google::protobuf::MethodDescriptor* me
 		if (! request->SerializeToString(&buffer) )
 			throw zqrpc::ZError(ZEC_INVALIDHEADER);
 		typedef std::vector<std::string> FramesT;
+		std::string myid = boost::lexical_cast<std::string>(boost::this_thread::get_id());
 		std::string nextid = boost::lexical_cast<std::string>(++nextreply_);
 		FramesT frames;
 		frames.push_back("");
@@ -127,7 +128,7 @@ void zqrpc::RpcChannel::ZRecvMethod(ZController* controller,
 			continue;
 		}
 		// discard bad data , but toget remains true hence loop
-		if (frames.size() !=4) continue;
+		if (frames.size() !=3) continue;
 		// BLANK ID ERRORCODE DATA
 		// data looks ok
 		std::size_t nextid = boost::lexical_cast<std::size_t>(frames[1]);
