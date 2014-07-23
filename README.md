@@ -11,10 +11,12 @@ Compile
 
 You will need
 
-1. ZeroMQ ( v3.2+ )
-2. Google Protocol Buffers ( v2.5 )
-3. Google Logging Framework - glog ( v0.3.3 )
-4. Boost ( v1.48+)
+- a C++ compiler ( gcc/clang++)
+- cmake ( v2.8+ )
+- ZeroMQ ( v3.2+ )
+- Google Protocol Buffers ( v2.5 )
+- Google Logging Framework - glog ( v0.3.3 )
+- Boost ( v1.48+)
 
 To Compile
 
