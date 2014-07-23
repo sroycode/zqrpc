@@ -6,17 +6,16 @@ ZQRPC: Protocol Buffer RPC transport
 Inspired by https://code.google.com/p/rpcz/
 
 
-Dependencies
-============
+Compile
+=======
+
 You will need
+<li>
 1. ZeroMQ ( v3.2+ )
 2. Google Protocol Buffers ( v2.5 )
 3. Google Logging Framework - glog ( v0.3.3 )
 4. Boost ( v1.48+)
-
-Compile
-=======
-
+</li>
 
 To Compile
 <pre>
