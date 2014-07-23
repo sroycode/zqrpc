@@ -11,7 +11,7 @@ Compile
 
 You will need
 
-- a C++ compiler ( gcc/clang++)
+- a C++ compiler ( g++/clang++)
 - cmake ( v2.8+ )
 - ZeroMQ ( v3.2+ )
 - Google Protocol Buffers ( v2.5 )
