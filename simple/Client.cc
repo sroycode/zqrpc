@@ -60,19 +60,33 @@ int main(int argc, char *argv[])
 		for (int i=1;i<argc;++i) {
 			std::string item(argv[i]);
 			if (item=="b") item = std::string("");
-			if (item=="n") item = boost::lexical_cast<std::string>(++client.nextreply_);
-			if (item=="i") item = boost::lexical_cast<std::string>(boost::this_thread::get_id());
-			if (item=="f") item = std::string("echo.EchoService.Echo1");
-			if (item=="x") {
-				boost::format fmt("\n$123456789012345678901234567890");
+			else if (item=="n") item = boost::lexical_cast<std::string>(++client.nextreply_);
+			else if (item=="i") item = boost::lexical_cast<std::string>(boost::this_thread::get_id());
+			else if (item=="f") item = std::string("echo.EchoService.Echo1");
+			else if (item=="x") {
+				// boost::format fmt("\n$123456789012345678901234567890");
+				boost::format fmt("\n$123456789012345678901");
 				item = fmt.str();
+			} else {
+				/** do nothing */
 			}
 			frames.push_back(item);
 		}
-		BOOST_FOREACH(std::string s, frames) { std::cerr << "OUT## " << s.length() << " " << s << std::endl; }
+		BOOST_FOREACH(std::string s, frames) {
+				std::cerr << "O## " << s.length() << " " << s << std::endl;
+				std::cerr << "O## ";
+				BOOST_FOREACH(char c , s) { std::cerr << " " << (int)c ; }
+				std::cerr << std::endl;
+		}
 		client.Send(frames);
 		frames = client.Recv();
-		BOOST_FOREACH(std::string s, frames) { std::cerr << " IN## " << s.length() << " " << s << std::endl; }
+		BOOST_FOREACH(std::string s, frames) {
+				std::cerr << "I## " << s.length() << " " << s << std::endl;
+				std::cerr << "I## ";
+				BOOST_FOREACH(char c , s) { std::cerr << " " << (int)c ; }
+				std::cerr << std::endl;
+		}
+		client.Send(frames);
 	} catch (zqrpc::ZError& e) {
 		DLOG(INFO) << "ZError THROWN" << std::endl;
 	} catch (zqrpc::RetryException& e) {
