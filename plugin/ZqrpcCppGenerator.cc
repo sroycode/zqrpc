@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "FileGenerator.hh"
-#include "ZqRpcCppGenerator.hh"
+#include "ZqrpcCppGenerator.hh"
 
 namespace zqrpc {
 namespace plugin {

@@ -33,7 +33,7 @@
 #ifndef _ZQRPC_ZSOCKET_HPP_
 #define _ZQRPC_ZSOCKET_HPP_
 
-#include <cstdint>
+#include <stdint.h>
 #include <cstring>
 #include <boost/thread.hpp>
 #include "zmq.hpp"
