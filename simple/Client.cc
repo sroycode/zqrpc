@@ -69,9 +69,10 @@ int main(int argc, char *argv[])
 			}
 			frames.push_back(item);
 		}
+		BOOST_FOREACH(std::string s, frames) { std::cerr << "OUT## " << s.length() << " " << s << std::endl; }
 		client.Send(frames);
 		frames = client.Recv();
-		BOOST_FOREACH(std::string s, frames) { std::cerr << "## " << s.length() << " " << s << std::endl; }
+		BOOST_FOREACH(std::string s, frames) { std::cerr << " IN## " << s.length() << " " << s << std::endl; }
 	} catch (zqrpc::ZError& e) {
 		DLOG(INFO) << "ZError THROWN" << std::endl;
 	} catch (zqrpc::RetryException& e) {
