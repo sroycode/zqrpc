@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 		}
 		client.Send(frames);
 		frames = client.Recv();
-		BOOST_FOREACH(std::string s, frames) { std::cerr << "## " << s << std::endl; }
+		BOOST_FOREACH(std::string s, frames) { std::cerr << "## " << s.length() << " " << s << std::endl; }
 	} catch (zqrpc::ZError& e) {
 		DLOG(INFO) << "ZError THROWN" << std::endl;
 	} catch (zqrpc::RetryException& e) {
