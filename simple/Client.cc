@@ -6,6 +6,7 @@
 #include <climits>
 #include <boost/lexical_cast.hpp>
 #include <boost/foreach.hpp>
+#include <boost/format.hpp>
 #include "zqrpc/ZSocket.hpp"
 
 namespace zqrpc {
@@ -46,7 +47,11 @@ struct Client {
 
 int main(int argc, char *argv[])
 {
-	if (argc==1) exit(1);
+	if (argc==1) {
+		std::cerr << "Usage : " << argv[0] << " params" << std::endl;
+		std::cerr << "Params " << " b: blank, n: request id, i: identity, f: sample pb function , x: sample data" << std::endl;
+		exit(1);
+	}
 	google::InitGoogleLogging(argv[0]);
 	try {
 		zmq::context_t context;
@@ -54,13 +59,13 @@ int main(int argc, char *argv[])
 		zqrpc::Client::FramesT frames;
 		for (int i=1;i<argc;++i) {
 			std::string item(argv[i]);
-			if (item=="r") item = boost::lexical_cast<std::string>(++client.nextreply_);
-			if (item=="t") item = boost::lexical_cast<std::string>(boost::this_thread::get_id());
+			if (item=="b") item = std::string("");
+			if (item=="n") item = boost::lexical_cast<std::string>(++client.nextreply_);
+			if (item=="i") item = boost::lexical_cast<std::string>(boost::this_thread::get_id());
 			if (item=="f") item = std::string("echo.EchoService.Echo1");
 			if (item=="x") {
-				char buffer[100];
-				sprintf(buffer,"\n$123456789012345678901234567890123456");
-				item = std::string(buffer);
+				boost::format fmt("\n$123456789012345678901234567890");
+				item = fmt.str();
 			}
 			frames.push_back(item);
 		}

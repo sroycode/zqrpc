@@ -87,7 +87,7 @@ public:
 		if(!fleft) return true;
 		for (typename T::const_iterator it = frames.begin(); it!=frames.end(); ++it,--fleft) {
 			zmq::message_t msg((void*)it->c_str(),it->length(),NULL);
-			DLOG(INFO) << std::string(static_cast<char*>(msg.data()), msg.size()) << std::endl;
+			// DLOG(INFO) << std::string(static_cast<char*>(msg.data()), msg.size()) << std::endl;
 			if (! socket_.send(msg, (fleft==1) ? 0 : ZMQ_SNDMORE) )
 				throw ZError(ZEC_CONNECTIONERROR,"cannot send data frame");
 		}
@@ -102,7 +102,7 @@ public:
 			zmq::message_t msg(0);
 			if (!socket_.recv(&msg, 0)) throw zqrpc::RetryException();
 			frames.push_back(std::string(static_cast<char*>(msg.data()), msg.size()));
-			DLOG(INFO) << std::string(static_cast<char*>(msg.data()), msg.size()) << std::endl;
+			// DLOG(INFO) << std::string(static_cast<char*>(msg.data()), msg.size()) << std::endl;
 			more = msg.more();
 		} while(more);
 
@@ -115,7 +115,7 @@ public:
 		zmq::message_t msg(0);
 		bool more=false;
 		do {
-			if (!socket_.recv(&msg, ZMQ_NOBLOCK)) throw zqrpc::RetryException();
+			if (!socket_.recv(&msg, ZMQ_DONTWAIT)) throw zqrpc::RetryException();
 			frames.push_back(std::string(static_cast<char*>(msg.data()), msg.size()));
 			more = msg.more();
 		} while(more);
@@ -127,7 +127,7 @@ public:
 		zmq::pollitem_t items[] = { { socket_, 0, ZMQ_POLLIN, 0 } };
 		zmq::poll (&items[0], 1, timeout);
 		return (items[0].revents & ZMQ_POLLIN);
-		DLOG(INFO) << "Polling End" << std::endl;
+		// DLOG(INFO) << "Polling End" << std::endl;
 	}
 
 private:
