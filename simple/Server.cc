@@ -1,6 +1,7 @@
 #include <vector>
 #include <boost/lexical_cast.hpp>
 #include <boost/bind.hpp>
+#include <boost/foreach.hpp>
 #include <boost/thread.hpp>
 #include "zqrpc/ZSocket.hpp"
 
@@ -21,6 +22,7 @@ struct Worker {
 		while (1) {
 			frames.clear();
 			frames = socket.BlockingRecv<FramesT>();
+			BOOST_FOREACH(std::string s, frames) { std::cerr << "## " << s << std::endl; }
 			socket.Send<FramesT>(frames);
 		}
 	}
