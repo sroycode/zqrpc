@@ -33,8 +33,6 @@
 #ifndef _ZQRPC_WORKER_HH_
 #define _ZQRPC_WORKER_HH_
 
-#include <boost/thread/thread_only.hpp>
-
 #include <map>
 #include <vector>
 #include "ZmqUtils.hpp"

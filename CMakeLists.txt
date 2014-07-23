@@ -11,7 +11,7 @@ option(zqrpc_build_tests "Build zqrpc's tests." OFF)
 option(zqrpc_build_static "Build static library." OFF)
 option(zqrpc_build_examples "Build zqrpc's examples." ON)
 
-find_package(GLog REQUIRED)
+find_package(Glog REQUIRED)
 find_package(ProtobufPlugin REQUIRED)
 find_package(Boost REQUIRED COMPONENTS thread program_options system)
 find_package(ZeroMQ REQUIRED)
