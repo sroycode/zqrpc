@@ -1,5 +1,6 @@
 # - Try to find Glog
 #
+#
 # The following variables are optionally searched for defaults
 #  GLOG_ROOT_DIR:            Base directory where all GLOG components are found
 #
