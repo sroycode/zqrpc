@@ -24,9 +24,9 @@ struct Worker {
 			frames = socket.BlockingRecv<FramesT>();
 			BOOST_FOREACH(std::string s, frames) {
 				std::cerr << "## " << s.length() << " " << s << std::endl;
-				std::cerr << "## ";
-				BOOST_FOREACH(char c , s) { std::cerr << " " << (int)c ; }
-				std::cerr << std::endl;
+				// std::cerr << "## ";
+				// BOOST_FOREACH(char c , s) { std::cerr << " " << (int)c ; }
+				// std::cerr << std::endl;
 			}
 			socket.Send<FramesT>(frames);
 		}

@@ -34,6 +34,7 @@ struct Client {
 	void Send(FramesT frames) {
 		bool status = socket_.Send<FramesT>(frames);
 		if (!status) throw zqrpc::RetryException();
+		usleep(20);
 	}
 
 
@@ -74,17 +75,17 @@ int main(int argc, char *argv[])
 		}
 		BOOST_FOREACH(std::string s, frames) {
 				std::cerr << "O## " << s.length() << " " << s << std::endl;
-				std::cerr << "O## ";
-				BOOST_FOREACH(char c , s) { std::cerr << " " << (int)c ; }
-				std::cerr << std::endl;
+				// std::cerr << "O## ";
+				// BOOST_FOREACH(char c , s) { std::cerr << " " << (int)c ; }
+				// std::cerr << std::endl;
 		}
 		client.Send(frames);
 		frames = client.Recv();
 		BOOST_FOREACH(std::string s, frames) {
 				std::cerr << "I## " << s.length() << " " << s << std::endl;
-				std::cerr << "I## ";
-				BOOST_FOREACH(char c , s) { std::cerr << " " << (int)c ; }
-				std::cerr << std::endl;
+				// std::cerr << "I## ";
+				// BOOST_FOREACH(char c , s) { std::cerr << " " << (int)c ; }
+				// std::cerr << std::endl;
 		}
 		client.Send(frames);
 	} catch (zqrpc::ZError& e) {

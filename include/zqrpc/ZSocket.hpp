@@ -86,7 +86,8 @@ public:
 		std::size_t fleft= frames.size();
 		if(!fleft) return true;
 		for (typename T::const_iterator it = frames.begin(); it!=frames.end(); ++it,--fleft) {
-			zmq::message_t msg((void*)it->c_str(),it->length(),NULL);
+			zmq::message_t msg (it->length());
+    	memcpy ((void *) msg.data (), it->c_str(), it->length());
 			// DLOG(INFO) << std::string(static_cast<char*>(msg.data()), msg.size()) << std::endl;
 			if (! socket_.send(msg, (fleft==1) ? 0 : ZMQ_SNDMORE) )
 				throw ZError(ZEC_CONNECTIONERROR,"cannot send data frame");

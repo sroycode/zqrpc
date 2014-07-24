@@ -6,6 +6,7 @@
 #  ZeroMQ_LIBRARIES - link these to use libzmq
 
 include(LibFindMacros)
+include(FindPackageHandleStandardArgs)
 
 IF (UNIX)
 	# Use pkg-config to get hints about paths
