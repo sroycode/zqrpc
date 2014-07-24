@@ -30,3 +30,7 @@ cd build
 cmake .. 
 make
 </pre>
+
+Thank You
+=========
+Kevin Sapper (sappo)
