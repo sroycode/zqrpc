@@ -46,11 +46,11 @@ public:
 
 	virtual void Echo1(const ::echo::EchoRequest* request,
 	                   ::echo::EchoResponse* response) {
-		sleep(3);
 		response->set_response(std::string("You sent1: ") + request->message());
 	}
 	virtual void Echo2(const ::echo::EchoRequest* request,
 	                   ::echo::EchoResponse* response) {
+		sleep(3);
 		response->set_response(std::string("You sent2: ") + request->message());
 	}
 };
