@@ -59,6 +59,10 @@ struct ZController {
 	ZController() : reqno_(MAX_SIZET), rcode_(ZRC_UNSET), zerror_(ZEC_SUCCESS) {}
 	virtual ~ZController() {}
 
+	virtual bool ok() {
+		return (rcode_==ZRC_READY);
+	}
+
 };
 }
 #endif

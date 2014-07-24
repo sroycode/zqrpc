@@ -7,17 +7,17 @@
  * @section LICENSE
  *
  * Copyright (c) 2014 S Roychowdhury
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software, and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
  * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
@@ -32,30 +32,78 @@
  */
 
 #include <iostream>
+#include <vector>
 #include "zqrpc.hpp"
 #include "echo.pb.h"
 #include "echo.zqrpc.h"
 
 #include "EchoEndpoint.hh"
 
+struct Basket {
+	zqrpc::ZController controller;
+	echo::EchoRequest request;
+	echo::EchoResponse response;
+	bool use_one;
+	long waitfor;
+	Basket(const char* message,bool use_echo_one, long wait_time)
+		: use_one(use_echo_one),waitfor(wait_time) {
+		request.set_message(message);
+	}
+	virtual ~Basket() {}
+};
+
 int main(int argc, char *argv[])
 {
 	google::InitGoogleLogging(argv[0]);
 	zmq::context_t* context = 0;
+	typedef std::vector<struct Basket> BasketVecT;
 
 	try {
 		context = new zmq::context_t(1);
-		zqrpc::ZController controller;
-		echo::EchoRequest request;
-		echo::EchoResponse response;
 		zqrpc::RpcChannel rpc_channel(context,ECHO_ENDPOINT_PORT);
 		echo::EchoService::Stub stub(&rpc_channel);
 
-		request.set_message("123456789012345678901234567890123456");
-		stub.Echo1(&controller, &request, &response,-1);
-		
-		std::cerr << "REQUEST: " << request.DebugString() << std::endl;
-		std::cerr << "REPLY: " << response.DebugString() << std::endl;
+		BasketVecT bask;
+		bask.push_back(Basket("The foolish race of mankind",false,-1));
+		bask.push_back(Basket("Are swarming below in the night;",false,-1));
+		bask.push_back(Basket("They shriek and rage and quarrel-",false,-1));
+		bask.push_back(Basket("And all of them are right.",false,-1));
+
+		bask.push_back(Basket("I don\'t believe in Heaven,",true,-1));
+		bask.push_back(Basket("Whose peace the preacher cites:",true,-1));
+		bask.push_back(Basket("I only trust your eyes now,",true,-1));
+		bask.push_back(Basket("Theyre my heavenly lights.",true,-1));
+		bask.push_back(Basket("I don\'t believe in God above,",true,-1));
+		bask.push_back(Basket("Who gets the preachers nod:",true,-1));
+		bask.push_back(Basket("I only trust your heart now,",true,-1));
+		bask.push_back(Basket("And have no other god.",true,-1));
+		bask.push_back(Basket("I don\'t believe in Devils,",true,-1));
+		bask.push_back(Basket("In hell or hells black art:",true,-1));
+		bask.push_back(Basket("I only trust your eyes now,",true,-1));
+		bask.push_back(Basket("And your devils heart.",true,-1));
+
+		// Send All
+		for (std::size_t i=0; i<bask.size(); ++i) {
+			if (bask[i].use_one)
+				stub.Echo1_Send(&bask[i].controller, &bask[i].request);
+			else
+				stub.Echo2_Send(&bask[i].controller, &bask[i].request);
+			std::cerr << "Request " << i << ":" << bask[i].request.DebugString() << std::endl;
+		}
+
+		// Receive All
+		for (std::size_t i=0; i<bask.size(); ++i) {
+			if (bask[i].use_one)
+				stub.Echo1_Recv(&bask[i].controller, &bask[i].response,bask[i].waitfor);
+			else
+				stub.Echo2_Recv(&bask[i].controller, &bask[i].response,bask[i].waitfor);
+
+			if (bask[i].controller.ok())
+				std::cerr << "Response" << i << ":" << bask[i].response.DebugString() << std::endl;
+			else
+				std::cerr << "Error in Response " << i << std::endl;
+		}
+
 
 	} catch (zmq::error_t& e) {
 		std::cerr << "ZMQ EXCEPTION : " << e.what() << std::endl;
