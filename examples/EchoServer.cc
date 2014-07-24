@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 		rpc_server.EndPoint(ECHO_ENDPOINT_PORT);
 		zqrpc::ServiceBase *service = new EchoServiceImpl();
 		rpc_server.RegisterService(service);
-		rpc_server.Start(2);
+		rpc_server.Start(5);
 	} catch (zmq::error_t& e) {
 		std::cerr << "ZMQ EXCEPTION : " << e.what() << std::endl;
 	} catch (std::exception& e) {
