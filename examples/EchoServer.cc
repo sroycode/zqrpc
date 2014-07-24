@@ -46,6 +46,7 @@ public:
 
 	virtual void Echo1(const ::echo::EchoRequest* request,
 	                   ::echo::EchoResponse* response) {
+		sleep(1);
 		response->set_response(std::string("You sent1: ") + request->message());
 	}
 	virtual void Echo2(const ::echo::EchoRequest* request,

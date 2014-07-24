@@ -64,11 +64,13 @@ int main(int argc, char *argv[])
 		echo::EchoService::Stub stub(&rpc_channel);
 
 		BasketVecT bask;
+		// 0-3
 		bask.push_back(Basket("The foolish race of mankind",false,-1));
 		bask.push_back(Basket("Are swarming below in the night;",false,-1));
 		bask.push_back(Basket("They shriek and rage and quarrel-",false,-1));
 		bask.push_back(Basket("And all of them are right.",false,-1));
 
+		// 4-last
 		bask.push_back(Basket("I don\'t believe in Heaven,",true,-1));
 		bask.push_back(Basket("Whose peace the preacher cites:",true,-1));
 		bask.push_back(Basket("I only trust your eyes now,",true,-1));
@@ -91,8 +93,23 @@ int main(int argc, char *argv[])
 			std::cerr << "Request " << i << ":" << bask[i].request.DebugString() << std::endl;
 		}
 
-		// Receive All
-		for (std::size_t i=0; i<bask.size(); ++i) {
+		// Receive 4-last
+		std::cerr << "RECEIVING 4-end" << std::endl;
+		for (std::size_t i=4; i<bask.size(); ++i) {
+			if (bask[i].use_one)
+				stub.Echo1_Recv(&bask[i].controller, &bask[i].response,bask[i].waitfor);
+			else
+				stub.Echo2_Recv(&bask[i].controller, &bask[i].response,bask[i].waitfor);
+
+			if (bask[i].controller.ok())
+				std::cerr << "Response" << i << ":" << bask[i].response.DebugString() << std::endl;
+			else
+				std::cerr << "Error in Response " << i << std::endl;
+		}
+
+		// Receive 0-3
+		std::cerr << "RECEIVING 0-3" << std::endl;
+		for (std::size_t i=0; i<4; ++i) {
 			if (bask[i].use_one)
 				stub.Echo1_Recv(&bask[i].controller, &bask[i].response,bask[i].waitfor);
 			else
