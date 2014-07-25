@@ -146,6 +146,7 @@ void zqrpc::RpcChannel::ZRecvMethod(ZController* controller,
 			othercon->payload_ = frames.at(3);
 			othercon->rcode_ = ZRC_READY;
 		}
+		replylist_.erase(it);
 	} while(true);
 
 	if (controller->rcode_==ZRC_READY)

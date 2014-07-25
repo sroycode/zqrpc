@@ -10,6 +10,7 @@
 #  GLOG_LIBRARIES
 #  GLOG_LIBRARYRARY_DIRS
 
+include(LibFindMacros)
 include(FindPackageHandleStandardArgs)
 
 set(GLOG_ROOT_DIR "" CACHE PATH "Folder contains Google glog")

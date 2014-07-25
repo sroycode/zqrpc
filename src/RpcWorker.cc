@@ -55,16 +55,12 @@ void zqrpc::RpcWorker::operator() ()
 	google::protobuf::Message* response = NULL;
 	typedef std::vector<std::string> FramesT;
 	FramesT frames;
-	std::string nextid;
 	while (1) {
 		try {
-			nextid="99999";
+			std::string nextid="99999";
 			frames.clear();
 			frames = socket.BlockingRecv<FramesT>();
 			try {
-				for (std::size_t i=0; i<frames.size(); ++i) {
-					DLOG(INFO) << i << "/" << frames.size() << " : " << frames[i] << std::endl;
-				}
 				if (frames.size() !=5)
 					continue;
 				nextid = frames.at(2);
@@ -108,4 +104,5 @@ void zqrpc::RpcWorker::operator() ()
 	}
 	delete request;
 	delete response;
+	socket.disconnect(ZQRPC_INPROC_WORKER);
 }
