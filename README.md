@@ -6,9 +6,9 @@ It is not necessary to fetch results in the same order as they have been submitt
 
 Please have a look at the examples folder.
 
-Usage is thus:
+## Usage:
 
-## Single Request
+### Single Request
 
 <pre>
 	// Set the context, mostly this will be shared across the app
@@ -27,7 +27,7 @@ Usage is thus:
 	.....
 </pre>
 
-## Multiple Requests
+### Multiple Requests
 
 For several parallel requests from the same program the syntax is thus:
 
@@ -51,9 +51,9 @@ For several parallel requests from the same program the syntax is thus:
 </pre>
 
 
-#Compile
+## Compile
 
-## Requirements
+### Requirements
 
 - a C++ compiler ( g++/clang++)
 - cmake ( v2.8+ )
@@ -62,7 +62,7 @@ For several parallel requests from the same program the syntax is thus:
 - Google Logging Framework - glog ( v0.3.3 )
 - Boost ( v1.48+)
 
-## To Compile
+### To Compile
 
 <pre>
 mkdir build
@@ -71,6 +71,6 @@ cmake ..
 make
 </pre>
 
-#Thank You
+##Thank You
 
 Kevin Sapper (sappo)
