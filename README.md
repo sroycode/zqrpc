@@ -1,6 +1,4 @@
-ZQRPC: Protocol Buffer RPC transport
-===================================
-
+# ZQRPC: Protocol Buffer RPC transport
 
 The idea is to create a mechanism for sending multiple requests if parallel and getting their answers
 when needed. In between, the cclient thread is free to do its own work.
@@ -10,7 +8,7 @@ Please have a look at the examples folder.
 
 Usage is thus:
 
-# Single Request
+## Single Request
 
 <pre>
 	// Set the context, mostly this will be shared across the app
@@ -28,6 +26,8 @@ Usage is thus:
 	if (controller.ok() ) // have got result 
 	.....
 </pre>
+
+## Multiple Requests
 
 For several parallel requests from the same program the syntax is thus:
 
@@ -51,10 +51,9 @@ For several parallel requests from the same program the syntax is thus:
 </pre>
 
 
-Compile
-=======
+#Compile
 
-You will need
+## Requirements
 
 - a C++ compiler ( g++/clang++)
 - cmake ( v2.8+ )
@@ -63,7 +62,7 @@ You will need
 - Google Logging Framework - glog ( v0.3.3 )
 - Boost ( v1.48+)
 
-To Compile
+## To Compile
 
 <pre>
 mkdir build
@@ -72,6 +71,6 @@ cmake ..
 make
 </pre>
 
-Thank You
-=========
+#Thank You
+
 Kevin Sapper (sappo)
