@@ -8,7 +8,31 @@ Please have a look at the examples folder.
 
 ## Usage:
 
-### Single Request
+### Server
+1. Start the context with n=1 string(s) and fire up the server
+<pre>
+	context = new zmq::context_t(1);
+	zqrpc::RpcServer rpc_server(context);
+</pre>
+
+2. Set Listening endpoints.
+<pre>
+	rpc_server.EndPoint("tcp://*.5555");
+	rpc_server.EndPoint("tcp://*.5556");
+</pre>
+
+3. Register the service of the handler implementations.
+<pre>
+	zqrpc::ServiceBase *service = new EchoServiceImpl();
+	rpc_server.RegisterService(service);
+</pre>
+
+4. Start the server service with n=5 workers
+<pre>
+	rpc_server.Start(5);
+</pre>
+
+### Client : Single Request
 
 <pre>
 	// Set the context, mostly this will be shared across the app
@@ -27,7 +51,7 @@ Please have a look at the examples folder.
 	.....
 </pre>
 
-### Multiple Requests
+### Client : Multiple Requests
 
 For several parallel requests from the same program the syntax is thus:
 
