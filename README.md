@@ -6,40 +6,6 @@ It is not necessary to fetch results in the same order as they have been submitt
 
 Please have a look at the examples folder.
 
-## Compile
-
-### Requirements
-
-- a C++ compiler ( g++/clang++)
-- cmake ( v2.8+ )
-- ZeroMQ ( v3.2+ )
-- Google Protocol Buffers ( v2.5 )
-- Google Logging Framework - glog ( v0.3.3 )
-- Boost ( v1.48+)
-
-### To Compile
-
-<pre>
-mkdir build
-cd build
-cmake .. 
-make
-</pre>
-
-### Run the example
-
-1. On one terminal from the build directory run
-<pre>
-export GLOG_logtostderr=1
-./example/EchoServer
-</pre>
-
-2. On another terminal from the build directory run
-<pre>
-export GLOG_logtostderr=1 
-./example/EchocLient
-</pre>
-
 ## Usage
 
 ### Server
@@ -116,6 +82,40 @@ refer to the example provided for a timer implementation.
 	
 </pre>
 
+
+## Compile
+
+### Requirements
+
+- a C++ compiler ( g++/clang++)
+- cmake ( v2.8+ )
+- ZeroMQ ( v3.2+ )
+- Google Protocol Buffers ( v2.5 )
+- Google Logging Framework - glog ( v0.3.3 )
+- Boost ( v1.48+)
+
+### To Compile
+
+<pre>
+mkdir build
+cd build
+cmake .. 
+make
+</pre>
+
+### Run the example
+
+1. On one terminal from the build directory run
+<pre>
+export GLOG_logtostderr=1
+./example/EchoServer
+</pre>
+
+2. On another terminal from the build directory run
+<pre>
+export GLOG_logtostderr=1 
+./example/EchocLient
+</pre>
 
 
 
