@@ -114,7 +114,7 @@ export GLOG_logtostderr=1
 2. On another terminal from the build directory run
 <pre>
 export GLOG_logtostderr=1 
-./example/EchocLient
+./example/EchoClient
 </pre>
 
 
