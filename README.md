@@ -17,8 +17,8 @@ Please have a look at the examples folder.
 
 2. Set Listening endpoints.
 <pre>
-	rpc_server.EndPoint("tcp://*.5555");
-	rpc_server.EndPoint("tcp://*.5556");
+	rpc_server.EndPoint("tcp://*.9038");
+	rpc_server.EndPoint("tcp://*.9039");
 </pre>
 
 3. Register the service of the handler implementations.
