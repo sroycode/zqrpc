@@ -9,7 +9,7 @@ Please have a look at the examples folder.
 ## Usage:
 
 ### Server
-1. Start the context with n=1 string(s) and fire up the server
+1. Start the context with n=1 string(s) and set up the server
 <pre>
 	context = new zmq::context_t(1);
 	zqrpc::RpcServer rpc_server(context);
@@ -32,31 +32,39 @@ Please have a look at the examples folder.
 	rpc_server.Start(5);
 </pre>
 
-### Client : Single Request
+### Client
 
+1. Start the context with n=1 string(s)
 <pre>
-	// Set the context, mostly this will be shared across the app
 	context = new zmq::context_t(1);
-	// create a channel to connect to a tcp host/port OR ipc OR inproc
+</pre>
+
+2. Create a channel to connect to a tcp host/port OR ipc OR inproc
+<pre>
 	zqrpc::RpcChannel rpc_channel(context,"http://127.0.0.1:9038");
 	echo::EchoService::Stub stub(&rpc_channel);
-	// we need a controller, request and reply
+</pre>
+
+3. We need a controller, request and reply
+<pre>
 	zqrpc::ZController controller;
 	echo::EchoRequest request;
 	echo::EchoResponse response;
-	// Single Request
+</pre>
+
+4. To have a single request
+<pre>
 	long timeout=100; // milliseconds
 	stub.Echo1(&controller, &request,&response, timeout);
 	if (controller.ok() ) // have got result 
 	.....
 </pre>
 
-### Client : Multiple Requests
-
-For several parallel requests from the same program the syntax is thus:
+5. For several parallel requests send them together and receive the results as you need them.
+Order of receive need not match that of send. The timeout holds for that request only, please
+refer to the example provided for a timer implementation.
 
 <pre>
-	// Multiple Requests
 	// Send
 	stub.Echo1_Send(&controller1, &request1);
 	stub.Echo1_Send(&controller2, &request2);
