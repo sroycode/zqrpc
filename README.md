@@ -103,6 +103,22 @@ cmake ..
 make
 </pre>
 
+### Run the example
+
+1. On one terminal from the build directory run
+<pre>
+export GLOG_logtostderr=1
+./example/EchoServer
+</pre>
+
+2. On another terminal from the build directory run
+<pre>
+export GLOG_logtostderr=1 
+./example/EchocLient
+</pre>
+
+
+
 ##Thank You
 
 Kevin Sapper (sappo)
