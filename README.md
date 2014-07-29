@@ -1,7 +1,7 @@
 # ZQRPC: Protocol Buffer RPC transport
 
 The idea is to create a mechanism for sending multiple requests if parallel and getting their answers
-when needed. In between, the cclient thread is free to do its own work.
+when needed. In between, the client thread is free to do its own work.
 It is not necessary to fetch results in the same order as they have been submitted.
 
 Please have a look at the examples folder.
