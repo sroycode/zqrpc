@@ -43,6 +43,8 @@
 namespace zqrpc {
 class ZSocket {
 
+friend class RpcServer;
+
 public:
 	ZSocket(zmq::context_t* context, int type, const std::string& id)
 		: socket_(*context,type)
@@ -71,10 +73,6 @@ public:
 
 	void close() {
 		socket_.close();
-	}
-
-	void ProxyTo(ZSocket& zsock) {
-		zmq::proxy(socket_,zsock.socket_,NULL);
 	}
 
 	void SetOption(int type,std::string opt) {

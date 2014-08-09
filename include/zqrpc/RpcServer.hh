@@ -64,6 +64,7 @@ protected:
 	zmq::context_t* context_;
 	ZSocket rpc_frontend_;
 	ZSocket rpc_backend_;
+	ZSocket rpc_control_;
 	bool started_;
 	RpcMethodMapT rpc_method_map_;
 	RpcBindVecT rpc_bind_vec_;

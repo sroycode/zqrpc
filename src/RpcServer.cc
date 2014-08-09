@@ -41,6 +41,7 @@ zqrpc::RpcServer::RpcServer(zmq::context_t* context) :
 	context_(context),
 	rpc_frontend_(context_,ZMQ_ROUTER,"ROUTER"),
 	rpc_backend_(context_,ZMQ_DEALER,"DEALER"),
+	rpc_control_(context_,ZMQ_SUB,"CONTROL"),
 	started_(false)
 {
 }
@@ -98,7 +99,11 @@ void zqrpc::RpcServer::Start(std::size_t noof_threads)
 			zqrpc::RpcWorker w(context_, rpc_method_map_);
 			threads_->create_thread<zqrpc::RpcWorker>(w);
 		}
-		rpc_frontend_.ProxyTo( rpc_backend_);
+#ifdef ZMQ_HAS_PROXY_STEERABLE
+		zmq::proxy_steerable(rpc_frontend_.socket_,rpc_backend_.socket_,NULL,rpc_control_.socket_);
+#else
+		zmq::proxy(rpc_frontend_.socket_,rpc_backend_.socket_,NULL);
+#endif
 		DLOG(INFO) << "Loop Ended " << std::endl;
 	} catch(const zmq::error_t& e) {
 		DLOG(INFO) << "Start Exception: " << e.what() << std::endl;
@@ -118,8 +123,13 @@ void zqrpc::RpcServer::Close()
 		for (RpcBindVecT::iterator it = rpc_bind_vec_.begin(); it != rpc_bind_vec_.end();++it) {
 			rpc_frontend_.unbind((*it).c_str());
 		}
+		started_=false;
+#ifdef ZMQ_HAS_PROXY_STEERABLE
+// terminate the proxy
+	zmq::socket_t cs (context_,ZMQ_PUB);
+	cs.send ("TERMINATE", 9, 0);
+#endif
 	}
-	started_=false;
 	// rpc_frontend_.close();
 	// rpc_backend_.close();
 }
