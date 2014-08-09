@@ -66,7 +66,7 @@ public:
 		socket_.bind(url);
 	}
 	void unbind(const char* url) {
-		socket_.unbind(url);
+		if (strncmp(url,"inproc",6)!=0) socket_.unbind(url);
 	}
 
 	void close() {
@@ -75,6 +75,10 @@ public:
 
 	void ProxyTo(ZSocket& zsock) {
 		zmq::proxy(socket_,zsock.socket_,NULL);
+	}
+
+	void SetOption(int type,std::string opt) {
+		socket_.setsockopt(type, opt.c_str(), opt.length());
 	}
 
 	void SetLinger(int linger = -1) {

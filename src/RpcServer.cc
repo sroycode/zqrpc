@@ -109,17 +109,19 @@ void zqrpc::RpcServer::Start(std::size_t noof_threads)
 
 void zqrpc::RpcServer::Close()
 {
+	// delete all methods
 	for (RpcMethodMapT::iterator it = rpc_method_map_.begin(); it != rpc_method_map_.end();) {
 		RpcMethod *rpc_method = it->second;
 		++it;
 		delete rpc_method;
 	}
+	// unbind , inprocs cannot be unbound 
 	if (started_) {
-		for (RpcBindVecT::iterator it = rpc_bind_vec_.begin(); it != rpc_bind_vec_.end();) {
+		for (RpcBindVecT::iterator it = rpc_bind_vec_.begin(); it != rpc_bind_vec_.end();++it) {
 			rpc_frontend_.unbind((*it).c_str());
 		}
-		rpc_backend_.unbind(ZQRPC_INPROC_WORKER);
 	}
-	rpc_frontend_.close();
-	rpc_backend_.close();
+	started_=false;
+	// rpc_frontend_.close();
+	// rpc_backend_.close();
 }
