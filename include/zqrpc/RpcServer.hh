@@ -35,6 +35,8 @@
 
 #include <map>
 #include <vector>
+#include <boost/thread.hpp>
+#include <boost/shared_ptr.hpp>
 #include "ZmqUtils.hpp"
 #include "RpcMethod.hpp"
 #include "ServiceBase.hpp"
@@ -65,6 +67,7 @@ protected:
 	bool started_;
 	RpcMethodMapT rpc_method_map_;
 	RpcBindVecT rpc_bind_vec_;
+	boost::shared_ptr<boost::thread_group> threads_;
 };
 }
 #endif

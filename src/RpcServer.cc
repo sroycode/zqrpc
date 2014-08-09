@@ -31,7 +31,6 @@
  *
  */
 #include <boost/bind.hpp>
-#include <boost/thread.hpp>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/stubs/common.h>
 #include "zqrpc/RpcHeaders.hh"
@@ -86,7 +85,6 @@ void zqrpc::RpcServer::RemoveService(zqrpc::ServiceBase* service)
 
 void zqrpc::RpcServer::Start(std::size_t noof_threads)
 {
-	boost::thread_group threads;
 	try {
 		for (RpcBindVecT::const_iterator it = rpc_bind_vec_.begin(); it!=rpc_bind_vec_.end();++it) {
 			rpc_frontend_.bind(it->c_str());
@@ -95,16 +93,16 @@ void zqrpc::RpcServer::Start(std::size_t noof_threads)
 		// set started flag here
 		started_=true;
 
+		threads_.reset(  new boost::thread_group() );
 		for(std::size_t i = 0; i < noof_threads; ++i) {
 			zqrpc::RpcWorker w(context_, rpc_method_map_);
-			threads.create_thread<zqrpc::RpcWorker>(w);
+			threads_->create_thread<zqrpc::RpcWorker>(w);
 		}
 		rpc_frontend_.ProxyTo( rpc_backend_);
 		DLOG(INFO) << "Loop Ended " << std::endl;
 	} catch(const zmq::error_t& e) {
 		DLOG(INFO) << "Start Exception: " << e.what() << std::endl;
 	}
-	threads.join_all();
 }
 
 void zqrpc::RpcServer::Close()
