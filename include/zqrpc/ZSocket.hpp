@@ -132,7 +132,7 @@ public:
 		return (items[0].revents & ZMQ_POLLIN);
 		// DLOG(INFO) << "Polling End" << std::endl;
 	}
-	
+
 private:
 	zmq::socket_t socket_;
 
