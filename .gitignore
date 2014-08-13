@@ -6,3 +6,4 @@ examples1
 examples2
 bin
 test
+.*.sh

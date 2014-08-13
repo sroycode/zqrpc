@@ -45,8 +45,5 @@ if(zqrpc_build_examples)
   add_subdirectory(examples)
 endif(zqrpc_build_examples)
 
-file(GLOB ZQRPC_PUBLIC_HEADERS
-	"${PROJECT_SOURCE_DIR}/include/zqrpc/*.h*"
-	"${PROJECT_SOURCE_DIR}/include/zqrpc.hpp"
-)
-install(FILES ${ZQRPC_PUBLIC_HEADERS} DESTINATION include)
+install(FILES include/zqrpc.hpp include/zmq.hpp DESTINATION include)
+install(DIRECTORY include/zqrpc DESTINATION include)

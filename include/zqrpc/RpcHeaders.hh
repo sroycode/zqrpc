@@ -38,5 +38,6 @@
 #include <glog/logging.h>
 
 #define ZQRPC_INPROC_WORKER "inproc://zqrpc.workers"
+#define ZQRPC_INPROC_WORKIL "inproc://zqrpc.workil"
 
 #endif

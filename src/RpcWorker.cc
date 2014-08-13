@@ -61,6 +61,10 @@ void zqrpc::RpcWorker::operator() ()
 			frames.clear();
 			frames = socket.BlockingRecv<FramesT>();
 			try {
+				if ((frames.size() ==2) && (frames.at(1) == "TERMINATE")) {
+					socket.Send<FramesT>(frames);
+					break;
+				}
 				if (frames.size() !=5)
 					continue;
 				nextid = frames.at(2);
@@ -105,4 +109,5 @@ void zqrpc::RpcWorker::operator() ()
 	delete request;
 	delete response;
 	socket.disconnect(ZQRPC_INPROC_WORKER);
+	DLOG(INFO) << boost::this_thread::get_id() << ":end: " << std::endl;
 }

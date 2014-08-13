@@ -7,17 +7,17 @@
  * @section LICENSE
  *
  * Copyright (c) 2014 S Roychowdhury
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software, and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
  * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
@@ -37,12 +37,13 @@
 #include "zqrpc/RpcServer.hh"
 #include "zqrpc/RpcWorker.hh"
 
+#define ZQRPC_INPROC_PCONTROL "inproc://zqrpc.proxycontrol"
+
 zqrpc::RpcServer::RpcServer(zmq::context_t* context) :
 	context_(context),
 	rpc_frontend_(context_,ZMQ_ROUTER,"ROUTER"),
 	rpc_backend_(context_,ZMQ_DEALER,"DEALER"),
-	rpc_control_(context_,ZMQ_SUB,"CONTROL"),
-	started_(false)
+	started_(0)
 {
 }
 
@@ -87,20 +88,20 @@ void zqrpc::RpcServer::RemoveService(zqrpc::ServiceBase* service)
 void zqrpc::RpcServer::Start(std::size_t noof_threads)
 {
 	try {
-		for (RpcBindVecT::const_iterator it = rpc_bind_vec_.begin(); it!=rpc_bind_vec_.end();++it) {
+		for (RpcBindVecT::const_iterator it = rpc_bind_vec_.begin(); it!=rpc_bind_vec_.end(); ++it) {
 			rpc_frontend_.bind(it->c_str());
 		}
 		rpc_backend_.bind(ZQRPC_INPROC_WORKER);
-		// set started flag here
 		started_=true;
-
 		threads_.reset(  new boost::thread_group() );
 		for(std::size_t i = 0; i < noof_threads; ++i) {
 			zqrpc::RpcWorker w(context_, rpc_method_map_);
 			threads_->create_thread<zqrpc::RpcWorker>(w);
 		}
 #ifdef ZMQ_HAS_PROXY_STEERABLE
-		zmq::proxy_steerable(rpc_frontend_.socket_,rpc_backend_.socket_,NULL,rpc_control_.socket_);
+		ZSocket rpc_control(context_,ZMQ_SUB,"CONTROL");
+		rpc_control.bind(ZQRPC_INPROC_PCONTROL);
+		zmq::proxy_steerable(rpc_frontend_.socket_,rpc_backend_.socket_,NULL,rpc_control.socket_);
 #else
 		zmq::proxy(rpc_frontend_.socket_,rpc_backend_.socket_,NULL);
 #endif
@@ -118,16 +119,30 @@ void zqrpc::RpcServer::Close()
 		++it;
 		delete rpc_method;
 	}
-	// unbind , inprocs cannot be unbound 
+	// unbind , inprocs cannot be unbound
 	if (started_) {
-		for (RpcBindVecT::iterator it = rpc_bind_vec_.begin(); it != rpc_bind_vec_.end();++it) {
+		for (RpcBindVecT::iterator it = rpc_bind_vec_.begin(); it != rpc_bind_vec_.end(); ++it) {
 			rpc_frontend_.unbind((*it).c_str());
 		}
 		started_=false;
+		ZSocket rpc_control(context_,ZMQ_DEALER,"TERMIN");
+		rpc_frontend_.bind(ZQRPC_INPROC_WORKIL);
+		rpc_control.connect(ZQRPC_INPROC_WORKIL);
+		std::size_t noof_threads=threads_->size();
+		typedef std::vector<std::string> FramesT;
+		FramesT frames;
+		FramesT oframes;
+		frames.push_back(std::string("TERMINATE"));
+		
+		for(std::size_t i = 0; i < noof_threads; ++i) {
+			rpc_control.Send<FramesT>(frames);
+			oframes=rpc_control.BlockingRecv<FramesT>();
+		}
+		threads_->join_all();
 #ifdef ZMQ_HAS_PROXY_STEERABLE
-// terminate the proxy
-	zmq::socket_t cs (context_,ZMQ_PUB);
-	cs.send ("TERMINATE", 9, 0);
+		zmq::socket_t cs (*context_,ZMQ_PUB);
+		cs.connect(ZQRPC_INPROC_PCONTROL);
+		cs.send ("TERMINATE", 9, 0);
 #endif
 	}
 	// rpc_frontend_.close();
