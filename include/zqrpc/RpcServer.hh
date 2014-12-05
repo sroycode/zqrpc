@@ -68,6 +68,9 @@ protected:
 	RpcBindVecT rpc_bind_vec_;
 	boost::shared_ptr<boost::thread_group> threads_;
 	bool started_;
+
+	void ProxyStart();
+	void ProxyStop();
 };
 }
 #endif

@@ -72,9 +72,9 @@ void zqrpc::RpcWorker::operator() ()
 				std::string buffer = frames.at(4);
 				frames.pop_back();
 				frames.pop_back();
-				DLOG(INFO) << "nextid->" << nextid << std::endl;
-				DLOG(INFO) << "opcode->" << opcode << std::endl;
-				DLOG(INFO) << "buffer->" << buffer << std::endl;
+				// DLOG(INFO) << "nextid->" << nextid << std::endl;
+				// DLOG(INFO) << "opcode->" << opcode << std::endl;
+				// DLOG(INFO) << "buffer->" << buffer << std::endl;
 				RpcMethodMapT::const_iterator iter = rpc_method_map_.find( opcode );
 				if (iter == rpc_method_map_.end())
 					throw zqrpc::ZError(ZEC_NOSUCHMETHOD);
@@ -89,7 +89,7 @@ void zqrpc::RpcWorker::operator() ()
 				if (!response->SerializeToString(&buffer) )
 					throw zqrpc::ZError(ZEC_DATACORRUPTED);
 				// send response message back
-				DLOG(INFO) << boost::this_thread::get_id() << " :outbuf: " << buffer << std::endl;
+				// DLOG(INFO) << boost::this_thread::get_id() << " :outbuf: " << buffer << std::endl;
 				// BLANK ID ERRORCODE DATA
 				frames.push_back("0"); // Error Code 0 = ZEC_SUCCESS
 				frames.push_back(buffer);

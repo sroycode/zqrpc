@@ -91,6 +91,7 @@ void zqrpc::RpcServer::Start(std::size_t noof_threads)
 		for (RpcBindVecT::const_iterator it = rpc_bind_vec_.begin(); it!=rpc_bind_vec_.end(); ++it) {
 			rpc_frontend_.bind(it->c_str());
 		}
+		rpc_frontend_.bind(ZQRPC_INPROC_WORKIL);
 		rpc_backend_.bind(ZQRPC_INPROC_WORKER);
 		started_=true;
 		threads_.reset(  new boost::thread_group() );
@@ -98,14 +99,10 @@ void zqrpc::RpcServer::Start(std::size_t noof_threads)
 			zqrpc::RpcWorker w(context_, rpc_method_map_);
 			threads_->create_thread<zqrpc::RpcWorker>(w);
 		}
-#ifdef ZMQ_HAS_PROXY_STEERABLE
-		ZSocket rpc_control(context_,ZMQ_SUB,"CONTROL");
-		rpc_control.bind(ZQRPC_INPROC_PCONTROL);
-		zmq::proxy_steerable(rpc_frontend_.socket_,rpc_backend_.socket_,NULL,rpc_control.socket_);
-#else
-		zmq::proxy(rpc_frontend_.socket_,rpc_backend_.socket_,NULL);
-#endif
+		ProxyStart();
 		DLOG(INFO) << "Loop Ended " << std::endl;
+	} catch(const ProxyException& e) {
+		DLOG(INFO) << "Proxy Exception: " << std::endl;
 	} catch(const zmq::error_t& e) {
 		DLOG(INFO) << "Start Exception: " << e.what() << std::endl;
 	}
@@ -121,30 +118,37 @@ void zqrpc::RpcServer::Close()
 	}
 	// unbind , inprocs cannot be unbound
 	if (started_) {
+		DLOG(INFO) << "server close called, started " << started_ << std::endl;
 		for (RpcBindVecT::iterator it = rpc_bind_vec_.begin(); it != rpc_bind_vec_.end(); ++it) {
 			rpc_frontend_.unbind((*it).c_str());
 		}
 		started_=false;
-		ZSocket rpc_control(context_,ZMQ_DEALER,"TERMIN");
-		rpc_frontend_.bind(ZQRPC_INPROC_WORKIL);
-		rpc_control.connect(ZQRPC_INPROC_WORKIL);
-		std::size_t noof_threads=threads_->size();
-		typedef std::vector<std::string> FramesT;
-		FramesT frames;
-		FramesT oframes;
-		frames.push_back(std::string("TERMINATE"));
-		
-		for(std::size_t i = 0; i < noof_threads; ++i) {
-			rpc_control.Send<FramesT>(frames);
-			oframes=rpc_control.BlockingRecv<FramesT>();
-		}
-		threads_->join_all();
-#ifdef ZMQ_HAS_PROXY_STEERABLE
-		zmq::socket_t cs (*context_,ZMQ_PUB);
-		cs.connect(ZQRPC_INPROC_PCONTROL);
-		cs.send ("TERMINATE", 9, 0);
-#endif
+		DLOG(INFO) << "server close called, started " << started_ << std::endl;
+		threads_->interrupt_all();
+		// threads_->join_all();
+		DLOG(INFO) << "proxy terminate called" << std::endl;
+		ProxyStop();
+		DLOG(INFO) << "proxy terminated" << std::endl;
 	}
 	// rpc_frontend_.close();
 	// rpc_backend_.close();
 }
+
+void zqrpc::RpcServer::ProxyStart()
+{
+	zmq::socket_t* frontend_ = &rpc_frontend_.socket_;
+	zmq::socket_t* backend_ = &rpc_backend_.socket_;
+	return zmq::proxy(*frontend_,*backend_,NULL);
+}
+
+
+void zqrpc::RpcServer::ProxyStop()
+{
+		ZSocket rpc_control(context_,ZMQ_DEALER,"TERMIN");
+		rpc_control.connect(ZQRPC_INPROC_WORKIL);
+		typedef std::vector<std::string> FramesT;
+		FramesT frames;
+		frames.push_back(std::string("TERMINATE"));
+		rpc_control.Send<FramesT>(frames);
+}
+

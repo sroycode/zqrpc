@@ -133,6 +133,10 @@ public:
 		// DLOG(INFO) << "Polling End" << std::endl;
 	}
 
+	void ProxyTo(ZSocket& zsock) {
+		zmq::proxy(socket_,zsock.socket_,NULL);
+	}
+
 private:
 	zmq::socket_t socket_;
 

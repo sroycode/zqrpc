@@ -55,6 +55,7 @@ enum ErrorCodeE {
 struct RetryException {};
 struct TimeoutException {};
 struct FatalException {};
+struct ProxyException {};
 
 class ZError : public std::exception {
 public:

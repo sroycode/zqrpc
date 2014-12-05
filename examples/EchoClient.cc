@@ -64,25 +64,13 @@ int main(int argc, char *argv[])
 		echo::EchoService::Stub stub(&rpc_channel);
 
 		BasketVecT bask;
-		// 0-3
+		// 0-1
 		bask.push_back(Basket("The foolish race of mankind",false,-1));
 		bask.push_back(Basket("Are swarming below in the night;",false,-1));
-		bask.push_back(Basket("They shriek and rage and quarrel-",false,-1));
-		bask.push_back(Basket("And all of them are right.",false,-1));
 
-		// 4-last
-		bask.push_back(Basket("I don\'t believe in Heaven,",true,-1));
-		bask.push_back(Basket("Whose peace the preacher cites:",true,-1));
-		bask.push_back(Basket("I only trust your eyes now,",true,-1));
-		bask.push_back(Basket("Theyre my heavenly lights.",true,-1));
-		bask.push_back(Basket("I don\'t believe in God above,",true,-1));
-		bask.push_back(Basket("Who gets the preachers nod:",true,-1));
-		bask.push_back(Basket("I only trust your heart now,",true,-1));
-		bask.push_back(Basket("And have no other god.",true,-1));
-		bask.push_back(Basket("I don\'t believe in Devils,",true,-1));
-		bask.push_back(Basket("In hell or hells black art:",true,-1));
-		bask.push_back(Basket("I only trust your eyes now,",true,-1));
-		bask.push_back(Basket("And your devils heart.",true,-1));
+		// 2-3
+		bask.push_back(Basket("They shriek and rage and quarrel-",true,-1));
+		bask.push_back(Basket("And all of them are right.",true,-1));
 
 		// Send All
 		for (std::size_t i=0; i<bask.size(); ++i) {
@@ -93,9 +81,9 @@ int main(int argc, char *argv[])
 			std::cerr << "Request " << i << ":" << bask[i].request.DebugString() << std::endl;
 		}
 
-		// Receive 4-last
-		std::cerr << "RECEIVING 4-end" << std::endl;
-		for (std::size_t i=4; i<bask.size(); ++i) {
+		// Receive 2-3
+		std::cerr << "RECEIVING 2-end" << std::endl;
+		for (std::size_t i=2; i<bask.size(); ++i) {
 			if (bask[i].use_one)
 				stub.Echo1_Recv(&bask[i].controller, &bask[i].response,bask[i].waitfor);
 			else
@@ -107,9 +95,9 @@ int main(int argc, char *argv[])
 				std::cerr << "Error in Response " << i << std::endl;
 		}
 
-		// Receive 0-3
-		std::cerr << "RECEIVING 0-3" << std::endl;
-		for (std::size_t i=0; i<4; ++i) {
+		// Receive 0-1
+		std::cerr << "RECEIVING 0-1" << std::endl;
+		for (std::size_t i=0; i<2; ++i) {
 			if (bask[i].use_one)
 				stub.Echo1_Recv(&bask[i].controller, &bask[i].response,bask[i].waitfor);
 			else
