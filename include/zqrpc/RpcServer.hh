@@ -46,6 +46,7 @@ namespace zqrpc {
 class RpcServer {
 	typedef std::map<std::string,RpcMethod*> RpcMethodMapT;
 	typedef std::vector<std::string> RpcBindVecT;
+	typedef std::vector<boost::thread*> ThreadPtrVecT;
 public:
 	RpcServer(zmq::context_t* context);
 	~RpcServer();
@@ -64,13 +65,15 @@ protected:
 	zmq::context_t* context_;
 	ZSocket rpc_frontend_;
 	ZSocket rpc_backend_;
+	ZSocket rpc_control_;
 	RpcMethodMapT rpc_method_map_;
 	RpcBindVecT rpc_bind_vec_;
-	boost::shared_ptr<boost::thread_group> threads_;
+	ThreadPtrVecT threads_;
 	bool started_;
 
 	void ProxyStart();
 	void ProxyStop();
+	void WorkerStop(std::size_t nos);
 };
 }
 #endif

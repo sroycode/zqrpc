@@ -56,6 +56,7 @@ struct RetryException {};
 struct TimeoutException {};
 struct FatalException {};
 struct ProxyException {};
+struct ExitException {};
 
 class ZError : public std::exception {
 public:

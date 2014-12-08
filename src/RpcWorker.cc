@@ -55,15 +55,16 @@ void zqrpc::RpcWorker::operator() ()
 	google::protobuf::Message* response = NULL;
 	typedef std::vector<std::string> FramesT;
 	FramesT frames;
-	while (1) {
+	bool isrunning=true;
+	while (isrunning) {
 		try {
 			std::string nextid="99999";
 			frames.clear();
 			frames = socket.BlockingRecv<FramesT>();
 			try {
 				if ((frames.size() ==2) && (frames.at(1) == "TERMINATE")) {
-					socket.Send<FramesT>(frames);
-					break;
+					isrunning=false;
+					throw zqrpc::ExitException();
 				}
 				if (frames.size() !=5)
 					continue;
@@ -104,6 +105,8 @@ void zqrpc::RpcWorker::operator() ()
 			DLOG(INFO) << boost::this_thread::get_id() << " :error: " << e.what() << std::endl;
 		} catch(const zqrpc::RetryException& e) {
 			DLOG(INFO) << boost::this_thread::get_id() << " :error: retry " << std::endl;
+		} catch(const zqrpc::ExitException& e) {
+			DLOG(INFO) << boost::this_thread::get_id() << " :exitexception " << std::endl;
 		}
 	}
 	delete request;

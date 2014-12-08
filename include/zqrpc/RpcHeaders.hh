@@ -39,5 +39,6 @@
 
 #define ZQRPC_INPROC_WORKER "inproc://zqrpc.workers"
 #define ZQRPC_INPROC_WORKIL "inproc://zqrpc.workil"
+#define ZQRPC_INPROC_PCONTROL "inproc://zqrpc.proxycontrol"
 
 #endif

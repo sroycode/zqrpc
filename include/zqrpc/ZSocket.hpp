@@ -35,6 +35,7 @@
 
 #include <stdint.h>
 #include <cstring>
+#include <vector>
 #include <boost/thread.hpp>
 #include "zmq.hpp"
 #include "ZError.hpp"
@@ -95,6 +96,13 @@ public:
 				throw ZError(ZEC_CONNECTIONERROR,"cannot send data frame");
 		}
 		return true;
+	}
+
+	bool SendString(const std::string& data) {
+		typedef std::vector<std::string> FramesT;
+		FramesT frames;
+		frames.push_back(data);
+		return Send<FramesT>(frames);
 	}
 
 	template<typename T>
