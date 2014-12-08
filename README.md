@@ -4,6 +4,7 @@ The idea is to create a mechanism for sending multiple requests if parallel and 
 when needed. In between, the client thread is free to do its own work.
 It is not necessary to fetch results in the same order as they have been submitted.
 
+
 Please have a look at the examples folder.
 
 ## Usage
@@ -30,6 +31,11 @@ Please have a look at the examples folder.
 4. Start the server service with n=5 workers
 <pre>
 	rpc_server.Start(5);
+</pre>
+
+5. Stop the server gracefully
+<pre>
+	rpc_server.Stop();
 </pre>
 
 ### Client
@@ -89,7 +95,7 @@ refer to the example provided for a timer implementation.
 
 - a C++ compiler ( g++/clang++)
 - cmake ( v2.8+ )
-- ZeroMQ ( v3.2+ )
+- ZeroMQ ( v4.0.5+ )
 - Google Protocol Buffers ( v2.5 )
 - Google Logging Framework - glog ( v0.3.3 )
 - Boost ( v1.48+)
