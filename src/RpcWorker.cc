@@ -112,5 +112,6 @@ void zqrpc::RpcWorker::operator() ()
 	delete request;
 	delete response;
 	socket.disconnect(ZQRPC_INPROC_WORKER);
+	socket.close();
 	DLOG(INFO) << boost::this_thread::get_id() << ":end: " << std::endl;
 }

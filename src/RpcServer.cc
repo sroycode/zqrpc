@@ -137,8 +137,9 @@ void zqrpc::RpcServer::Close()
 		ProxyStop();
 		DLOG(INFO) << "proxy terminated" << std::endl;
 	}
-	// rpc_frontend_.close();
-	// rpc_backend_.close();
+	rpc_frontend_.close();
+	rpc_backend_.close();
+	rpc_control_.close();
 }
 
 void zqrpc::RpcServer::ProxyStart()
@@ -155,6 +156,8 @@ void zqrpc::RpcServer::ProxyStop()
 		ZSocket rpc_c_(context_,ZMQ_DEALER,"TERMIN");
 		rpc_c_.connect(ZQRPC_INPROC_PCONTROL);
 		rpc_c_.SendString("TERMINATE");
+		rpc_c_.disconnect(ZQRPC_INPROC_PCONTROL);
+		rpc_c_.close();
 }
 
 void zqrpc::RpcServer::WorkerStop(std::size_t nos)
@@ -164,5 +167,7 @@ void zqrpc::RpcServer::WorkerStop(std::size_t nos)
 		for (std::size_t i=0;i<nos;++i) {
 			rpc_c_.SendString("TERMINATE");
 		}
+		rpc_c_.disconnect(ZQRPC_INPROC_WORKIL);
+		rpc_c_.close();
 }
 
