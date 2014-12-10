@@ -113,5 +113,12 @@ void zqrpc::RpcWorker::operator() ()
 	delete response;
 	socket.disconnect(ZQRPC_INPROC_WORKER);
 	socket.close();
+	/**
+	for (RpcMethodMapT::iterator it = rpc_method_map_.begin(); it != rpc_method_map_.end();) {
+		RpcMethod *rpc_method = it->second;
+		++it;
+		delete rpc_method;
+	}
+	*/
 	DLOG(INFO) << boost::this_thread::get_id() << ":end: " << std::endl;
 }

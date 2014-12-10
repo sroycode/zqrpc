@@ -109,12 +109,14 @@ void zqrpc::RpcServer::Start(std::size_t noof_threads)
 
 void zqrpc::RpcServer::Close()
 {
+	/** 
 	// delete all methods
 	for (RpcMethodMapT::iterator it = rpc_method_map_.begin(); it != rpc_method_map_.end();) {
 		RpcMethod *rpc_method = it->second;
 		++it;
 		delete rpc_method;
 	}
+	*/
 	// unbind , inprocs cannot be unbound
 	if (started_) {
 		DLOG(INFO) << "server close called, started " << started_ << std::endl;
