@@ -38,13 +38,19 @@
 #include "zqrpc/RpcWorker.hh"
 
 
-zqrpc::RpcServer::RpcServer(zmq::context_t* context) :
+zqrpc::RpcServer::RpcServer(zmq::context_t* context,const char* suffix) :
 	context_(context),
+	use_inproc_workil( std::string(ZQRPC_INPROC_WORKIL)+std::string(suffix) ),
+	use_inproc_worker( std::string(ZQRPC_INPROC_WORKER)+std::string(suffix) ),
+	use_inproc_pcontrol( std::string(ZQRPC_INPROC_PCONTROL)+std::string(suffix) ),
 	rpc_frontend_(context_,ZMQ_ROUTER,"ROUTER"),
 	rpc_backend_(context_,ZMQ_DEALER,"DEALER"),
 	rpc_control_(context_,ZMQ_DEALER,"CONTROL"),
 	started_(0)
 {
+	DLOG(INFO) << use_inproc_workil << std::endl;
+	DLOG(INFO) << use_inproc_worker << std::endl;
+	DLOG(INFO) << use_inproc_pcontrol << std::endl;
 }
 
 zqrpc::RpcServer::~RpcServer()
@@ -91,9 +97,9 @@ void zqrpc::RpcServer::Start(std::size_t noof_threads)
 		for (RpcBindVecT::const_iterator it = rpc_bind_vec_.begin(); it!=rpc_bind_vec_.end(); ++it) {
 			rpc_frontend_.bind(it->c_str());
 		}
-		rpc_frontend_.bind(ZQRPC_INPROC_WORKIL);
-		rpc_backend_.bind(ZQRPC_INPROC_WORKER);
-		rpc_control_.bind(ZQRPC_INPROC_PCONTROL);
+		rpc_frontend_.bind(use_inproc_workil.c_str());
+		rpc_backend_.bind(use_inproc_worker.c_str());
+		rpc_control_.bind(use_inproc_pcontrol.c_str());
 		started_=true;
 		for(std::size_t i = 0; i < noof_threads; ++i) {
 			threads_.push_back( new boost::thread(zqrpc::RpcWorker(context_, rpc_method_map_)) );
@@ -156,20 +162,20 @@ void zqrpc::RpcServer::ProxyStart()
 void zqrpc::RpcServer::ProxyStop()
 {
 		ZSocket rpc_c_(context_,ZMQ_DEALER,"TERMIN");
-		rpc_c_.connect(ZQRPC_INPROC_PCONTROL);
+		rpc_c_.connect(use_inproc_pcontrol.c_str());
 		rpc_c_.SendString("TERMINATE");
-		rpc_c_.disconnect(ZQRPC_INPROC_PCONTROL);
+		rpc_c_.disconnect(use_inproc_pcontrol.c_str());
 		rpc_c_.close();
 }
 
 void zqrpc::RpcServer::WorkerStop(std::size_t nos)
 {
 		ZSocket rpc_c_(context_,ZMQ_DEALER,"WSTOP");
-		rpc_c_.connect(ZQRPC_INPROC_WORKIL);
+		rpc_c_.connect(use_inproc_workil.c_str());
 		for (std::size_t i=0;i<nos;++i) {
 			rpc_c_.SendString("TERMINATE");
 		}
-		rpc_c_.disconnect(ZQRPC_INPROC_WORKIL);
+		rpc_c_.disconnect(use_inproc_workil.c_str());
 		rpc_c_.close();
 }
 

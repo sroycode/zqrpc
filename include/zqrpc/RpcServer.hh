@@ -48,7 +48,7 @@ class RpcServer {
 	typedef std::vector<std::string> RpcBindVecT;
 	typedef std::vector<boost::thread*> ThreadPtrVecT;
 public:
-	RpcServer(zmq::context_t* context);
+	RpcServer(zmq::context_t* context, const char* suffix=ZQRPC_DEF_SUFFIX);
 	~RpcServer();
 	// add endpoints
 	void EndPoint(const char* url);
@@ -62,7 +62,11 @@ public:
 	void Close();
 
 protected:
+	
 	zmq::context_t* context_;
+	const std::string use_inproc_workil;
+	const std::string use_inproc_worker;
+	const std::string use_inproc_pcontrol;
 	ZSocket rpc_frontend_;
 	ZSocket rpc_backend_;
 	ZSocket rpc_control_;

@@ -39,9 +39,11 @@
 #include "zqrpc/RpcWorker.hh"
 
 
-zqrpc::RpcWorker::RpcWorker(zmq::context_t* context, RpcMethodMapT rpc_method_map)
+zqrpc::RpcWorker::RpcWorker(zmq::context_t* context, RpcMethodMapT rpc_method_map,
+	const char* suffix)
 	: context_(context),
-	  rpc_method_map_(rpc_method_map)
+	  rpc_method_map_(rpc_method_map),
+		use_inproc_worker( std::string(ZQRPC_INPROC_WORKER)+std::string(suffix) )
 {}
 
 zqrpc::RpcWorker::~RpcWorker() {}
@@ -49,7 +51,7 @@ zqrpc::RpcWorker::~RpcWorker() {}
 void zqrpc::RpcWorker::operator() ()
 {
 	zqrpc::ZSocket socket(context_,ZMQ_DEALER,boost::lexical_cast<std::string>(boost::this_thread::get_id()));
-	socket.connect(ZQRPC_INPROC_WORKER);
+	socket.connect(use_inproc_worker.c_str());
 	socket.SetLinger(0);
 	google::protobuf::Message* request = NULL;
 	google::protobuf::Message* response = NULL;
@@ -111,7 +113,7 @@ void zqrpc::RpcWorker::operator() ()
 	}
 	delete request;
 	delete response;
-	socket.disconnect(ZQRPC_INPROC_WORKER);
+	socket.disconnect(use_inproc_worker.c_str());
 	socket.close();
 	/**
 	for (RpcMethodMapT::iterator it = rpc_method_map_.begin(); it != rpc_method_map_.end();) {
