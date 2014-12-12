@@ -48,9 +48,6 @@ zqrpc::RpcServer::RpcServer(zmq::context_t* context,const char* suffix) :
 	rpc_control_(context_,ZMQ_DEALER,"CONTROL"),
 	started_(0)
 {
-	DLOG(INFO) << use_inproc_workil << std::endl;
-	DLOG(INFO) << use_inproc_worker << std::endl;
-	DLOG(INFO) << use_inproc_pcontrol << std::endl;
 }
 
 zqrpc::RpcServer::~RpcServer()
