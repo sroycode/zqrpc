@@ -51,6 +51,7 @@ zqrpc::RpcWorker::~RpcWorker() {}
 void zqrpc::RpcWorker::operator() ()
 {
 	zqrpc::ZSocket socket(context_,ZMQ_DEALER,boost::lexical_cast<std::string>(boost::this_thread::get_id()));
+	DLOG(INFO) << "Connecting " << use_inproc_worker.c_str() << std::endl;
 	socket.connect(use_inproc_worker.c_str());
 	socket.SetLinger(0);
 	google::protobuf::Message* request = NULL;
@@ -113,7 +114,9 @@ void zqrpc::RpcWorker::operator() ()
 	}
 	delete request;
 	delete response;
+	DLOG(INFO) << "Disconnecting " << use_inproc_worker.c_str() << std::endl;
 	socket.disconnect(use_inproc_worker.c_str());
+	DLOG(INFO) << "Disconnected " << use_inproc_worker.c_str() << std::endl;
 	socket.close();
 	/**
 	for (RpcMethodMapT::iterator it = rpc_method_map_.begin(); it != rpc_method_map_.end();) {

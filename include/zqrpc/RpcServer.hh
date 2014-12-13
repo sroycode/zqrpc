@@ -64,6 +64,7 @@ public:
 protected:
 	
 	zmq::context_t* context_;
+	const char* suffix_;
 	const std::string use_inproc_workil;
 	const std::string use_inproc_worker;
 	const std::string use_inproc_pcontrol;

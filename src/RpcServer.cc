@@ -40,9 +40,10 @@
 
 zqrpc::RpcServer::RpcServer(zmq::context_t* context,const char* suffix) :
 	context_(context),
-	use_inproc_workil( std::string(ZQRPC_INPROC_WORKIL)+std::string(suffix) ),
-	use_inproc_worker( std::string(ZQRPC_INPROC_WORKER)+std::string(suffix) ),
-	use_inproc_pcontrol( std::string(ZQRPC_INPROC_PCONTROL)+std::string(suffix) ),
+	suffix_(suffix),
+	use_inproc_workil( std::string(ZQRPC_INPROC_WORKIL)+std::string(suffix_) ),
+	use_inproc_worker( std::string(ZQRPC_INPROC_WORKER)+std::string(suffix_) ),
+	use_inproc_pcontrol( std::string(ZQRPC_INPROC_PCONTROL)+std::string(suffix_) ),
 	rpc_frontend_(context_,ZMQ_ROUTER,"ROUTER"),
 	rpc_backend_(context_,ZMQ_DEALER,"DEALER"),
 	rpc_control_(context_,ZMQ_DEALER,"CONTROL"),
@@ -95,11 +96,15 @@ void zqrpc::RpcServer::Start(std::size_t noof_threads)
 			rpc_frontend_.bind(it->c_str());
 		}
 		rpc_frontend_.bind(use_inproc_workil.c_str());
+		DLOG(INFO) << "Bound " << use_inproc_workil.c_str() << std::endl;
 		rpc_backend_.bind(use_inproc_worker.c_str());
+		DLOG(INFO) << "Bound " << use_inproc_worker.c_str() << std::endl;
 		rpc_control_.bind(use_inproc_pcontrol.c_str());
+		DLOG(INFO) << "Bound " << use_inproc_pcontrol.c_str() << std::endl;
+		
 		started_=true;
 		for(std::size_t i = 0; i < noof_threads; ++i) {
-			threads_.push_back( new boost::thread(zqrpc::RpcWorker(context_, rpc_method_map_)) );
+			threads_.push_back( new boost::thread(zqrpc::RpcWorker(context_, rpc_method_map_,suffix_)) );
 		}
 		ProxyStart();
 		DLOG(INFO) << "Loop Ended " << std::endl;

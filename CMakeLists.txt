@@ -1,8 +1,8 @@
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
+set(CMAKE_BUILD_TYPE "Release")
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Debug")
-  #set(CMAKE_BUILD_TYPE "Release")
 endif()
 message("-- Build type: ${CMAKE_BUILD_TYPE}")
 
