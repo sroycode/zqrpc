@@ -14,6 +14,7 @@ Please have a look at the examples folder.
 <pre>
 	context = new zmq::context_t(1);
 	zqrpc::RpcServer rpc_server(context);
+	// zqrpc::RpcServer rpc_server(context,".extn");
 </pre>
 
 2. Set Listening endpoints.
