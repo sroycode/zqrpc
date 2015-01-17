@@ -30,8 +30,8 @@
  *  ServiceBase.hpp : Base class for rpc service
  *
  */
-#ifndef _ZQRPC_SERVICE_HPP_
-#define _ZQRPC_SERVICE_HPP_
+#ifndef _ZQRPC_SERVICEBASE_HPP_
+#define _ZQRPC_SERVICEBASE_HPP_
 
 #include <assert.h>
 #include <string>

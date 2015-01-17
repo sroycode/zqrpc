@@ -1,6 +1,6 @@
 /**
  * @project zqrpc
- * @file include/zqrpc/RpcServer.hh
+ * @file include/zqrpc/SubServer.hh
  * @author  S Roychowdhury <sroycode @ gmail DOT com>
  * @version 0.1
  *
@@ -27,11 +27,11 @@
  *
  * @section DESCRIPTION
  *
- *  RpcServer.hh : Server Headers
+ *  SubServer.hh : Server Headers
  *
  */
-#ifndef _ZQRPC_RPCSERVER_HH_
-#define _ZQRPC_RPCSERVER_HH_
+#ifndef _ZQRPC_SUBSERVER_HH_
+#define _ZQRPC_SUBSERVER_HH_
 
 #include <map>
 #include <vector>
@@ -43,13 +43,13 @@
 
 namespace zqrpc {
 
-class RpcServer {
+class SubServer {
 	typedef std::map<std::string,RpcMethod*> RpcMethodMapT;
 	typedef std::vector<std::string> RpcBindVecT;
 	typedef std::vector<boost::thread*> ThreadPtrVecT;
 public:
-	RpcServer(zmq::context_t* context, const char* suffix=ZQRPC_DEF_SUFFIX);
-	~RpcServer();
+	SubServer(zmq::context_t* context, const char* suffix=ZQRPC_DEF_SUFFIX);
+	~SubServer();
 	// add endpoints
 	void EndPoint(const char* url);
 	// start
