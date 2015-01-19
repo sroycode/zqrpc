@@ -48,6 +48,7 @@ class RpcServer {
 	typedef std::vector<std::string> RpcBindVecT;
 	typedef std::vector<boost::thread*> ThreadPtrVecT;
 public:
+	RpcServer(zmq::context_t* context, const bool noreply, const char* suffix=ZQRPC_DEF_SUFFIX);
 	RpcServer(zmq::context_t* context, const char* suffix=ZQRPC_DEF_SUFFIX);
 	~RpcServer();
 	// add endpoints
@@ -75,6 +76,7 @@ protected:
 	RpcBindVecT rpc_bind_vec_;
 	ThreadPtrVecT threads_;
 	bool started_;
+	const bool noreply_;
 
 	void ProxyStart();
 	void ProxyStop();

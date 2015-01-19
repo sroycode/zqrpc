@@ -44,12 +44,14 @@ class RpcWorker {
 	typedef std::map<std::string,RpcMethod*> RpcMethodMapT;
 	typedef std::vector<std::string> RpcBindVecT;
 public:
-	RpcWorker(zmq::context_t* context, RpcMethodMapT rpc_method_map,const char* suffix=ZQRPC_DEF_SUFFIX);
+	RpcWorker(zmq::context_t* context, RpcMethodMapT rpc_method_map,
+		const bool noreply, const char* suffix=ZQRPC_DEF_SUFFIX);
 	~RpcWorker();
 	void operator() ();
 private:
 	zmq::context_t* context_;
 	RpcMethodMapT rpc_method_map_;
+	const bool noreply_;
 	const std::string use_inproc_worker;
 
 };

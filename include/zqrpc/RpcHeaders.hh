@@ -30,8 +30,8 @@
  *  RpcHeaders.hh : Generic Headers
  *
  */
-#ifndef _ZQRPC_RPC_HEADERS_HH_
-#define _ZQRPC_RPC_HEADERS_HH_
+#ifndef _ZQRPC_RPCHEADERS_HH_
+#define _ZQRPC_RPCHEADERS_HH_
 
 #include <string>
 #include <exception>

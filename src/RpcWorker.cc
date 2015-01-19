@@ -40,9 +40,10 @@
 
 
 zqrpc::RpcWorker::RpcWorker(zmq::context_t* context, RpcMethodMapT rpc_method_map,
-	const char* suffix)
+	const bool noreply, const char* suffix)
 	: context_(context),
 	  rpc_method_map_(rpc_method_map),
+		noreply_(noreply),
 		use_inproc_worker( std::string(ZQRPC_INPROC_WORKER)+std::string(suffix) )
 {}
 
@@ -97,12 +98,12 @@ void zqrpc::RpcWorker::operator() ()
 				// BLANK ID ERRORCODE DATA
 				frames.push_back("0"); // Error Code 0 = ZEC_SUCCESS
 				frames.push_back(buffer);
-				socket.Send<FramesT>(frames);
+				if (!noreply_) socket.Send<FramesT>(frames);
 			} catch(const zqrpc::ZError& e) {
 				// BLANK ID ERRORCODE DATA
 				frames.push_back(boost::lexical_cast<std::string>(e.icode()));
 				frames.push_back(std::string(e.what()));
-				socket.Send<FramesT>(frames);
+				if (!noreply_) socket.Send<FramesT>(frames);
 			}
 		} catch(const zmq::error_t& e) {
 			DLOG(INFO) << boost::this_thread::get_id() << " :error: " << e.what() << std::endl;
