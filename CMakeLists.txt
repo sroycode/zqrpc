@@ -45,5 +45,5 @@ if(zqrpc_build_examples)
   add_subdirectory(examples)
 endif(zqrpc_build_examples)
 
-install(FILES include/zqrpc.hpp include/zmq.hpp DESTINATION include)
+install(FILES include/zqrpc.hpp DESTINATION include)
 install(DIRECTORY include/zqrpc DESTINATION include)
