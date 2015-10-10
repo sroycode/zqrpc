@@ -1,10 +1,37 @@
+# compiler version check
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++11" CMAKE_COMPILER_SUPPORTS_CXX11)
+set(CMAKE_COMPILER_SUPPORTS_CXX11 OFF)
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+	set (CMAKE_COMPILER_IS_CLANG 1)
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+	set (CMAKE_COMPILER_IS_GNUCC 1)
+endif()
+
+if (NOT CMAKE_BUILD_TYPE)
+    set (CMAKE_BUILD_TYPE "Release")
+endif ()
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set (DEBUGMODE ON)
+endif ()
+if (CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    # cmake bug workaround -- on some platforms, cmake doesn't set NDEBUG for RelWithDebInfo mode
+    add_definitions ("-DNDEBUG")
+endif ()
+
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+message (STATUS "Project source dir = ${PROJECT_SOURCE_DIR}")
+message (STATUS "Project build dir = ${CMAKE_BINARY_DIR}")
+
+if ("${PROJECT_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
+    message (FATAL_ERROR "Not allowed to run in-source build!")
+endif ()
+
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
-set(CMAKE_BUILD_TYPE "Release")
-if (NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Debug")
-endif()
-message("-- Build type: ${CMAKE_BUILD_TYPE}")
+SET_PROPERTY(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+SET_PROPERTY(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
 
 option(zqrpc_build_plugin "Build zqrpc's plugin." ON)
 option(zqrpc_build_tests "Build zqrpc's tests." OFF)
@@ -24,9 +51,33 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_BINARY_DIR}/src)
 
 cmake_minimum_required (VERSION 2.8.0)
-set(CMAKE_CXX_FLAGS
-  "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-sign-compare -Wno-unused-parameter")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -Werror")
+
+if(CMAKE_COMPILER_SUPPORTS_CXX11)
+	add_definitions ("-std=c++11")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCOMPILER_SUPPORTS_CXX11=1")
+endif()
+
+# Clang-specific options
+if (CMAKE_COMPILER_IS_CLANG OR CMAKE_COMPILER_IS_APPLECLANG)
+    add_definitions ("-Wno-unused-function")
+    add_definitions ("-Wno-overloaded-virtual")
+    add_definitions ("-Wno-unneeded-internal-declaration")
+    add_definitions ("-Wno-unused-private-field")
+    add_definitions ("-Wno-tautological-compare")
+    # disable warning about unused command line arguments
+    add_definitions ("-Qunused-arguments")
+    # Don't warn if we ask it not to warn about warnings it doesn't know
+    add_definitions ("-Wunknown-warning-option")
+    if (CLANG_VERSION_STRING VERSION_GREATER 3.5 OR APPLECLANG_VERSION_STRING VERSION_GREATER 6.0)
+        add_definitions ("-Wno-unused-local-typedefs")
+    endif ()
+elseif(CMAKE_COMPILER_IS_GNUCC)
+    if (NOT ${GCC_VERSION} VERSION_LESS 4.8)
+        add_definitions("-Wno-error=unused-local-typedefs")
+        add_definitions("-Wno-unused-local-typedefs")
+    endif ()
+endif ()
+
 set(CMAKE_OSX_ARCHITECTURES x86_64)
 
 add_subdirectory(src)

@@ -25,7 +25,8 @@
 #ifndef __ZMQ_HPP_INCLUDED__
 #define __ZMQ_HPP_INCLUDED__
 
-#if __cplusplus >= 201103L
+
+#ifdef COMPILER_SUPPORTS_CXX11
 #define ZMQ_CPP11
 #define ZMQ_NOTHROW noexcept
 #define ZMQ_EXPLICIT explicit
@@ -417,8 +418,12 @@ namespace zmq
         xsub = ZMQ_XSUB,
         push = ZMQ_PUSH,
         pull = ZMQ_PULL,
+#if ZMQ_VERSION_MAJOR < 4
+        pair = ZMQ_PAIR
+#else
         pair = ZMQ_PAIR,
         stream = ZMQ_STREAM
+#endif
     };
     #endif
 
