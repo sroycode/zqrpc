@@ -41,6 +41,14 @@
 #include "ZError.hpp"
 #include "RpcHeaders.hh"
 
+#ifdef ZMQ_CPP11
+#define ZQRPC_VOIDCAST(AAA) static_cast<void *>(AAA)
+#define ZQRPC_NULL nullptr
+#else
+#define ZQRPC_VOIDCAST(AAA) AAA
+#define ZQRPC_NULL NULL
+#endif
+
 namespace zqrpc {
 class ZSocket {
 
@@ -135,14 +143,18 @@ public:
 	}
 
 	bool Poll(long timeout) {
+#ifdef ZMQ_CPP11
+		std::vector<zmq::pollitem_t> items = { { ZQRPC_VOIDCAST(socket_), 0, ZMQ_POLLIN, 0 } };
+#else
 		zmq::pollitem_t items[] = { { socket_, 0, ZMQ_POLLIN, 0 } };
+#endif
 		zmq::poll (&items[0], 1, timeout);
 		return (items[0].revents & ZMQ_POLLIN);
 		// DLOG(INFO) << "Polling End" << std::endl;
 	}
 
 	void ProxyTo(ZSocket& zsock) {
-		zmq::proxy(socket_,zsock.socket_,NULL);
+		zmq::proxy(ZQRPC_VOIDCAST(socket_),ZQRPC_VOIDCAST(zsock.socket_),ZQRPC_NULL);
 	}
 
 private:

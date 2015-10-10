@@ -173,7 +173,12 @@ void zqrpc::RpcServer::ProxyStart()
 	zmq::socket_t* frontend_ = &rpc_frontend_.socket_;
 	zmq::socket_t* backend_ = &rpc_backend_.socket_;
 	zmq::socket_t* control_ = &rpc_control_.socket_;
-	return zmq::proxy_steerable(*frontend_,*backend_,NULL,*control_);
+	return zmq::proxy_steerable(
+		ZQRPC_VOIDCAST(*frontend_),
+		ZQRPC_VOIDCAST(*backend_),
+		ZQRPC_NULL,
+		ZQRPC_VOIDCAST(*control_)
+	);
 }
 
 
