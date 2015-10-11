@@ -32,7 +32,7 @@
  */
 #ifndef _ZQRPC_HPP_
 #define _ZQRPC_HPP_
-#include "zmq.hpp"
+#include "zqrpc/zmq.hpp"
 #include "zqrpc/ZmqUtils.hpp"
 #include "zqrpc/ServiceBase.hpp"
 #include "zqrpc/RpcHeaders.hh"
